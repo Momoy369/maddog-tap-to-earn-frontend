@@ -1,0 +1,72 @@
+{
+  "name": "maddog-tap-to-earn-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@solana/wallet-adapter-react": "^0.15.36",
+    "@solana/wallet-adapter-react-ui": "^0.9.36",
+    "@solana/wallet-adapter-wallets": "^0.19.33",
+    "@solana/web3.js": "^1.98.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "assert": "^2.1.0",
+    "axios": "^0.27.2",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react": "^19.0.0",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^19.0.0",
+    "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.4",
+    "util": "^0.12.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "browser": {
+    "crypto": "crypto-browserify",
+    "stream": "stream-browserify",
+    "assert": "assert",
+    "http": "stream-http",
+    "https": "https-browserify",
+    "os": "os-browserify",
+    "url": "url",
+    "buffer": "buffer",
+    "process": "process"
+  },
+  "devDependencies": {
+    "@types/telegram-web-app": "^7.10.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3"
+  }
+}
