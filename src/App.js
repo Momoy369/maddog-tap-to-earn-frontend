@@ -5,7 +5,7 @@ import TapFrenzy from "./TapFrenzy";
 import WalletProviderComponent from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-const API_URL = "http://localhost:3000/user";
+const API_URL = "https://maddog-token.site/user";
 
 function App() {
   const [user, setUser] = useState(null);
