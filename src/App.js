@@ -13,23 +13,24 @@ function App() {
   const [nonce, setNonce] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.ready(); // Pastikan WebApp siap sebelum mengambil data
-      tg.expand();
-      const userData = tg.initDataUnsafe?.user;
-
-      if (userData) {
-        axios
-          .post(`${API_URL}/register`, { telegramId: userData.id })
-          .then((res) => {
-            setUser(userData);
-            setBalance(res.data.balance || 0);
-          })
-          .catch((err) => console.error("Error fetching user data:", err));
-      }
-    } else {
+    if (!window.Telegram || !window.Telegram.WebApp) {
       console.warn("Telegram WebApp tidak tersedia!");
+      return;
+    }
+
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    const userData = tg.initDataUnsafe?.user;
+    if (userData) {
+      axios
+        .post(`${API_URL}/register`, { telegramId: userData.id })
+        .then((res) => {
+          setUser(userData);
+          setBalance(res.data.balance || 0);
+        })
+        .catch((err) => console.error("Error fetching user data:", err));
     }
   }, []);
 
