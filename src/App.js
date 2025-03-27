@@ -41,7 +41,7 @@ function App() {
   };
 
   return (
-    <WalletProviderComponent>
+    <WalletProvider.WalletProviderComponent>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-4">
           🚀 Maddog Token Tap-to-Earn
@@ -86,7 +86,7 @@ function App() {
         <Leaderboard />
         {user && <TapFrenzy telegramId={user.id} updateBalance={setBalance} />}
       </div>
-    </WalletProviderComponent>
+    </WalletProvider.WalletProviderComponent>
   );
 }
 
