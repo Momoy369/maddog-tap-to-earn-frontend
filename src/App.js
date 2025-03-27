@@ -108,8 +108,18 @@ function App() {
       alert("Kode referral belum tersedia.");
       return;
     }
-    navigator.clipboard.writeText(referralLink);
-    alert("Tautan referral berhasil disalin! 📋");
+
+    setTimeout(() => {
+      navigator.clipboard
+        .writeText(referralLink)
+        .then(() => {
+          alert("Tautan referral berhasil disalin! 📋");
+        })
+        .catch((err) => {
+          console.error("Gagal menyalin ke clipboard", err);
+          alert("Terjadi kesalahan saat menyalin kode referral.");
+        });
+    }, 0);
   };
 
   return (
