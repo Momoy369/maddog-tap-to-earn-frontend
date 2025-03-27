@@ -26,10 +26,6 @@ code {
   }
 }
 
-.animate-fadeUp {
-  animation: fadeUp 1s forwards;
-}
-
 @keyframes shake {
   0% {
     transform: translateX(0);
