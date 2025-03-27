@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
@@ -11,8 +11,9 @@ function App() {
   const [balance, setBalance] = useState(0);
   const [referralCode, setReferralCode] = useState("Memuat...");
   const [taps, setTaps] = useState([]);
+  const [lastWithdraw, setLastWithdraw] = useState(null);
+  const [lastClaimed, setLastClaimed] = useState(null);
   const [isShaking, setIsShaking] = useState(false);
-  const [tapPosition, setTapPosition] = useState({ x: 0, y: 0 });
   const [walletAddress, setWalletAddress] = useState("");
   const [showWalletInput, setShowWalletInput] = useState(false);
 
@@ -34,6 +35,7 @@ function App() {
           alert(res.data.error);
         } else {
           setBalance(res.data.balance);
+          setLastWithdraw(new Date(res.data.lastWithdraw));
           alert("Withdraw berhasil!");
         }
       })
@@ -70,7 +72,7 @@ function App() {
     }
   }, []);
 
-  const handleTap = () => {
+  const handleTap = (e) => {
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -117,6 +119,7 @@ function App() {
 
         <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
           <img
+            ref={imageRef}
             src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
             alt="Maddog Token"
             className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
@@ -156,7 +159,7 @@ function App() {
 
             <button
               onClick={handleWithdraw}
-              disabled={balance < 50000 || !walletAddress} // Disable if balance is insufficient or no wallet address
+              disabled={balance < 50000 || !walletAddress}
               className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
                 balance < 50000 || !walletAddress
                   ? "bg-gray-400 cursor-not-allowed"
@@ -177,7 +180,7 @@ function App() {
                 className="w-full p-2 rounded-lg text-black"
                 placeholder="Alamat wallet"
                 value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)} // Update wallet address
+                onChange={(e) => setWalletAddress(e.target.value)}
               />
               <button
                 onClick={handleWithdraw}
@@ -188,34 +191,9 @@ function App() {
             </div>
           )}
 
-          {/* Tombol Withdraw dengan pengecekan saldo */}
-          <button
-            onClick={() => {
-              axios
-                .post(`${API_URL}/withdraw`, {
-                  telegramId: user.id,
-                  walletAddress: "your-wallet-address",
-                })
-                .then((res) => {
-                  if (res.data.error) {
-                    alert(res.data.error);
-                  } else {
-                    setBalance(res.data.balance);
-                    setLastWithdraw(new Date(res.data.lastWithdraw));
-                    alert("Withdraw berhasil!");
-                  }
-                })
-                .catch((err) => console.error("Error withdrawing:", err));
-            }}
-            disabled={balance < 50000}
-            className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
-              balance < 50000
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            💸 Withdraw
-          </button>
+          <div className="mt-8 w-full max-w-2xl">
+            <Leaderboard />
+          </div>
         </div>
 
         {user ? (
@@ -260,10 +238,6 @@ function App() {
             {tap.value}
           </div>
         ))}
-      </div>
-
-      <div className="mt-8 w-full max-w-2xl">
-        <Leaderboard />
       </div>
     </WalletProviderComponent>
   );
