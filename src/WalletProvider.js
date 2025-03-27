@@ -18,13 +18,15 @@ import { clusterApiUrl } from "@solana/web3.js";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 export const WalletProviderComponent = ({ children }) => {
-  const network = WalletAdapterNetwork.Mainnet; // Ganti ke Testnet jika perlu
-
+  const network = "mainnet-beta";
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     []
   );
+
+  console.log("Rendering WalletProviderComponent...");
 
   return (
     <ConnectionProvider endpoint={endpoint}>
@@ -36,21 +38,23 @@ export const WalletProviderComponent = ({ children }) => {
 };
 
 
-const WalletHandler = () => {
-  const { publicKey } = useWallet();
 
-  useEffect(() => {
-    if (publicKey) {
-      console.log("Wallet Connected:", publicKey.toBase58());
+// const WalletHandler = () => {
+//   const wallet = useWallet();
+//   const publicKey = wallet?.publicKey;
 
-      axios
-        .post("https://maddog-token.site/user/save-wallet", {
-          walletAddress: publicKey.toBase58(),
-        })
-        .then((response) => console.log("Wallet saved:", response.data))
-        .catch((error) => console.error("Error saving wallet:", error));
-    }
-  }, [publicKey]);
+//   useEffect(() => {
+//     if (publicKey) {
+//       console.log("Wallet Connected:", publicKey.toBase58());
 
-  return <WalletMultiButton />;
-};
+//       axios
+//         .post("https://maddog-token.site/user/save-wallet", {
+//           walletAddress: publicKey.toBase58(),
+//         })
+//         .then((response) => console.log("Wallet saved:", response.data))
+//         .catch((error) => console.error("Error saving wallet:", error));
+//     }
+//   }, [publicKey]);
+
+//   return <WalletMultiButton />;
+// };
