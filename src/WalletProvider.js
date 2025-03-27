@@ -31,7 +31,10 @@ export const WalletProviderComponent = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+          <WalletHandler /> {/* Pastikan WalletHandler dipanggil di sini */}
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
@@ -39,22 +42,23 @@ export const WalletProviderComponent = ({ children }) => {
 
 
 
-// const WalletHandler = () => {
-//   const wallet = useWallet();
-//   const publicKey = wallet?.publicKey;
 
-//   useEffect(() => {
-//     if (publicKey) {
-//       console.log("Wallet Connected:", publicKey.toBase58());
+const WalletHandler = () => {
+  const wallet = useWallet();
+  const publicKey = wallet?.publicKey;
 
-//       axios
-//         .post("https://maddog-token.site/user/save-wallet", {
-//           walletAddress: publicKey.toBase58(),
-//         })
-//         .then((response) => console.log("Wallet saved:", response.data))
-//         .catch((error) => console.error("Error saving wallet:", error));
-//     }
-//   }, [publicKey]);
+  useEffect(() => {
+    if (publicKey) {
+      console.log("Wallet Connected:", publicKey.toBase58());
 
-//   return <WalletMultiButton />;
-// };
+      axios
+        .post("https://maddog-token.site/user/save-wallet", {
+          walletAddress: publicKey.toBase58(),
+        })
+        .then((response) => console.log("Wallet saved:", response.data))
+        .catch((error) => console.error("Error saving wallet:", error));
+    }
+  }, [publicKey]);
+
+  return <WalletMultiButton />;
+};
