@@ -42,49 +42,56 @@ function App() {
 
   return (
     <WalletProviderComponent>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+        <h1 className="text-4xl font-bold text-center mb-6">
           🚀 Maddog Token Tap-to-Earn
         </h1>
-        <img
-          src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-          alt="Maddog Token"
-          className="rounded-full w-32 h-32 shadow-lg"
-        />
 
-        {user ? (
-          <div className="mt-6 w-full max-w-lg p-6 bg-gray-800 rounded-lg shadow-md text-center">
-            <p className="text-lg font-semibold">👤 {user.username}</p>
-            <p className="text-xl font-bold text-green-400">
-              💰 {balance} Coins
-            </p>
+        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <img
+            src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+            alt="Maddog Token"
+            className="rounded-full w-28 h-28 shadow-md mb-4"
+          />
 
-            <button
-              onClick={handleTap}
-              className="mt-4 w-full py-3 bg-blue-500 hover:bg-blue-600 transition rounded-lg text-white font-semibold shadow-md"
-            >
-              💥 TAP!
-            </button>
+          {user ? (
+            <div className="text-center">
+              <p className="text-lg font-semibold">👤 {user.username}</p>
+              <p className="text-2xl font-bold text-green-400 my-2">
+                💰 {balance} Coins
+              </p>
 
-            <div className="mt-4">
-              <WalletMultiButton />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 transition rounded-lg">
-                🎁 Daily Reward
+              <button
+                onClick={handleTap}
+                className="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 transition-all rounded-lg text-white font-semibold shadow-md"
+              >
+                💥 TAP!
               </button>
-              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 transition rounded-lg">
-                Withdraw
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p className="mt-6">Loading...</p>
-        )}
 
-        <Leaderboard />
-        {user && <TapFrenzy telegramId={user.id} updateBalance={setBalance} />}
+              <div className="mt-4 flex justify-center">
+                <WalletMultiButton />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-6">
+                <button className="px-4 py-3 bg-yellow-500 hover:bg-yellow-600 transition-all rounded-lg w-full text-white font-semibold">
+                  🎁 Daily Reward
+                </button>
+                <button className="px-4 py-3 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-6 text-lg">Loading...</p>
+          )}
+        </div>
+
+        <div className="mt-8 w-full max-w-2xl">
+          <Leaderboard />
+          {user && (
+            <TapFrenzy telegramId={user.id} updateBalance={setBalance} />
+          )}
+        </div>
       </div>
     </WalletProviderComponent>
   );
