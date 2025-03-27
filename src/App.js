@@ -25,11 +25,10 @@ function App() {
         axios
           .post(`${API_URL}/register`, { telegramId: userData.id })
           .then((res) => {
-            console.log("API Response:", res.data); // Debugging log
-
+            console.log("API Response:", res.data); // Debugging
             setUser(userData);
             setBalance(res.data.balance || 0);
-            setReferralCode(res.data.referralCode ?? "Belum tersedia"); // Perbaiki kode referral
+            setReferralCode(res.data.referralCode ?? "Belum tersedia");
           })
           .catch((err) => {
             console.error("Error fetching user data:", err);
