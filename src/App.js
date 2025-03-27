@@ -162,7 +162,7 @@ function App() {
 
             <button
               onClick={handleWithdraw}
-              disabled={balance < 50000 || !walletAddress} // Disable if balance is insufficient or no wallet address
+              disabled={balance < 50000 || !walletAddress}
               className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
                 balance < 50000 || !walletAddress
                   ? "bg-gray-400 cursor-not-allowed"
