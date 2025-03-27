@@ -10,9 +10,35 @@ function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [referralCode, setReferralCode] = useState("Memuat...");
-  const [lastWithdraw, setLastWithdraw] = useState(null);
-  const [lastClaimed, setLastClaimed] = useState(null);
-  const [taps, setTaps] = useState([]); // Menyimpan data taps untuk animasi
+  const [taps, setTaps] = useState([]);
+  const [isShaking, setIsShaking] = useState(false);
+  const [tapPosition, setTapPosition] = useState({ x: 0, y: 0 });
+  const [walletAddress, setWalletAddress] = useState("");
+  const [showWalletInput, setShowWalletInput] = useState(false);
+
+  const imageRef = useRef(null);
+
+  const handleWithdraw = () => {
+    if (!walletAddress) {
+      setShowWalletInput(true);
+      return;
+    }
+
+    axios
+      .post(`${API_URL}/withdraw`, {
+        telegramId: user.id,
+        walletAddress: walletAddress,
+      })
+      .then((res) => {
+        if (res.data.error) {
+          alert(res.data.error);
+        } else {
+          setBalance(res.data.balance);
+          alert("Withdraw berhasil!");
+        }
+      })
+      .catch((err) => console.error("Error withdrawing:", err));
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -45,18 +71,24 @@ function App() {
   }, []);
 
   const handleTap = () => {
-    const newTap = { id: Date.now(), value: "+1" };
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newTap = { id: Date.now(), value: "+1", x, y };
     setTaps((prevTaps) => [...prevTaps, newTap]);
 
-    // Kirimkan request ke backend untuk memperbarui balance
     axios
-      .post(`${API_URL}/tap`, { telegramId: user.id }) // Request ke backend
+      .post(`${API_URL}/tap`, { telegramId: user.id })
       .then((res) => {
         if (res.data) {
-          setBalance((prev) => prev + 1); // Update balance di frontend
+          setBalance((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error updating balance:", err));
+
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 500);
 
     setTimeout(() => {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
@@ -88,7 +120,7 @@ function App() {
             src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
             alt="Maddog Token"
             className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
-            onClick={handleTap} // Menambahkan event onClick untuk tap
+            onClick={handleTap}
           />
           <p>
             Last Withdraw:{" "}
@@ -122,28 +154,11 @@ function App() {
               🎁 Klaim Harian
             </button>
 
-            {/* Tombol Withdraw dengan pengecekan saldo */}
             <button
-              onClick={() => {
-                axios
-                  .post(`${API_URL}/withdraw`, {
-                    telegramId: user.id,
-                    walletAddress: "your-wallet-address", // Ganti dengan wallet address
-                  })
-                  .then((res) => {
-                    if (res.data.error) {
-                      alert(res.data.error);
-                    } else {
-                      setBalance(res.data.balance);
-                      setLastWithdraw(new Date(res.data.lastWithdraw));
-                      alert("Withdraw berhasil!");
-                    }
-                  })
-                  .catch((err) => console.error("Error withdrawing:", err));
-              }}
-              disabled={balance < 50000} // Menonaktifkan tombol jika saldo kurang dari 50.000
+              onClick={handleWithdraw}
+              disabled={balance < 50000 || !walletAddress} // Disable if balance is insufficient or no wallet address
               className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
-                balance < 50000
+                balance < 50000 || !walletAddress
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600"
               }`}
@@ -152,53 +167,103 @@ function App() {
             </button>
           </div>
 
-          {user ? (
-            <div className="text-center">
-              <p className="text-lg font-semibold">👤 {user.username}</p>
-              <p className="text-2xl font-bold text-green-400 my-2">
-                💰 {balance} Coins
-              </p>
-              <div className="mt-4">
-                <WalletMultiButton />
-              </div>
-              <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
-                <p className="text-lg font-semibold">🔗 Kode Referral</p>
-                <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
-                  {referralCode}
-                </p>
-                <button
-                  onClick={copyReferralCode}
-                  className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
-                >
-                  📋 Salin Kode
-                </button>
-              </div>
+          {showWalletInput && (
+            <div className="mt-3 w-full max-w-md">
+              <label className="block text-sm text-white mb-2">
+                Masukkan Alamat Wallet:
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 rounded-lg text-black"
+                placeholder="Alamat wallet"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)} // Update wallet address
+              />
+              <button
+                onClick={handleWithdraw}
+                className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
+              >
+                Konfirmasi Withdraw
+              </button>
             </div>
-          ) : (
-            <p className="mt-6 text-lg">Loading...</p>
           )}
+
+          {/* Tombol Withdraw dengan pengecekan saldo */}
+          <button
+            onClick={() => {
+              axios
+                .post(`${API_URL}/withdraw`, {
+                  telegramId: user.id,
+                  walletAddress: "your-wallet-address",
+                })
+                .then((res) => {
+                  if (res.data.error) {
+                    alert(res.data.error);
+                  } else {
+                    setBalance(res.data.balance);
+                    setLastWithdraw(new Date(res.data.lastWithdraw));
+                    alert("Withdraw berhasil!");
+                  }
+                })
+                .catch((err) => console.error("Error withdrawing:", err));
+            }}
+            disabled={balance < 50000}
+            className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
+              balance < 50000
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            💸 Withdraw
+          </button>
         </div>
 
-        {/* Menambahkan animasi angka yang melayang */}
-        <div className="relative">
-          {taps.map((tap) => (
-            <div
-              key={tap.id}
-              className="absolute text-green-500 text-xl animate-fadeUp"
-              style={{
-                left: `${Math.random() * 90 + 5}%`, // Posisi horizontal acak
-                top: `${Math.random() * 30 + 50}%`, // Posisi vertikal acak
-                animationDuration: "1s", // Durasi animasi
-              }}
-            >
-              {tap.value}
+        {user ? (
+          <div className="text-center">
+            <p className="text-lg font-semibold">👤 {user.username}</p>
+            <p className="text-2xl font-bold text-green-400 my-2">
+              💰 {balance} Coins
+            </p>
+            <div className="mt-4">
+              <WalletMultiButton />
             </div>
-          ))}
-        </div>
+            <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
+              <p className="text-lg font-semibold">🔗 Kode Referral</p>
+              <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
+                {referralCode}
+              </p>
+              <button
+                onClick={copyReferralCode}
+                className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
+              >
+                📋 Salin Kode
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="mt-6 text-lg">Loading...</p>
+        )}
+      </div>
 
-        <div className="mt-8 w-full max-w-2xl">
-          <Leaderboard />
-        </div>
+      {/* Menambahkan animasi angka yang melayang */}
+      <div className="relative">
+        {taps.map((tap) => (
+          <div
+            key={tap.id}
+            className="absolute text-green-500 text-xl animate-fadeUp"
+            style={{
+              left: `${tap.x}px`,
+              top: `${tap.y}px`,
+              animationDuration: "1s",
+            }}
+          >
+            {tap.value}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 w-full max-w-2xl">
+        <Leaderboard />
       </div>
     </WalletProviderComponent>
   );
