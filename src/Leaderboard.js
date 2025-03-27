@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://maddog-token.site/user";
+const API_URL = "https://maddog-token.site/api/user";
 
 function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
