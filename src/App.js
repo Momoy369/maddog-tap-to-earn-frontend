@@ -112,7 +112,6 @@ function App() {
   };
 
   return (
-    <WalletProviderComponent>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
         <h1 className="text-4xl font-bold text-center mb-6">
           🚀 Maddog Token Tap-to-Earn
@@ -201,6 +200,7 @@ function App() {
                 💰 {balance} Coins
               </p>
               <div className="mt-4">
+                <WalletMultiButton />
               </div>
               <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
                 <p className="text-lg font-semibold">🔗 Kode Referral</p>
@@ -241,7 +241,6 @@ function App() {
           <Leaderboard />
         </div>
       </div>
-    </WalletProviderComponent>
   );
 }
 
