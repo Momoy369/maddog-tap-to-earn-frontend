@@ -3,10 +3,11 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { WalletProviderComponent } from "./WalletProvider";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.render(
   <React.StrictMode>
     <WalletProviderComponent>
       <App />
     </WalletProviderComponent>
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById("root")
 );
