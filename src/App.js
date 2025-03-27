@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import TapFrenzy from "./TapFrenzy";
-import { WalletProviderComponent } from "./WalletProvider";
+import * as WalletProvider from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const API_URL = "https://maddog-token.site/user";
