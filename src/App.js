@@ -183,7 +183,7 @@ function App() {
                 className="w-full p-2 rounded-lg text-black"
                 placeholder="Alamat wallet"
                 value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)} // Update wallet address
+                onChange={(e) => setWalletAddress(e.target.value)}
               />
               <button
                 onClick={handleWithdraw}
@@ -201,7 +201,6 @@ function App() {
                 💰 {balance} Coins
               </p>
               <div className="mt-4">
-                <WalletMultiButton />
               </div>
               <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
                 <p className="text-lg font-semibold">🔗 Kode Referral</p>
