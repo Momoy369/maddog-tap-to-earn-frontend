@@ -27,7 +27,7 @@ function App() {
 
       if (userData) {
         axios
-          .post(`${API_URL}/register`, { telegramId: userData.id })
+          .post(`${API_URL}/api/register`, { telegramId: userData.id })
           .then((res) => {
             setUser(userData);
             setBalance(res.data.balance || 0);
@@ -47,7 +47,7 @@ function App() {
   const claimDailyReward = () => {
     if (!user) return alert("User belum login!");
     axios
-      .post(`${API_URL}/daily-reward`, { telegramId: user.id })
+      .post(`${API_URL}/api/daily-reward`, { telegramId: user.id })
       .then((res) => setBalance(res.data.balance));
   };
 
@@ -55,7 +55,7 @@ function App() {
     if (!user) return;
 
     try {
-      const res = await axios.post(`${API_URL}/tap`, { telegramId: user.id });
+      const res = await axios.post(`${API_URL}/api/tap`, { telegramId: user.id });
       setBalance(res.data.balance);
     } catch (error) {
       console.error("Error saat TAP:", error);
@@ -72,7 +72,7 @@ function App() {
     if (!wallet) return;
 
     try {
-      const response = await axios.post(`${API_URL}/withdraw`, {
+      const response = await axios.post(`${API_URL}/api/withdraw`, {
         telegramId: user.id,
         wallet: wallet,
         nonce: nonce,
@@ -95,7 +95,7 @@ function App() {
     if (!user) return alert("Anda harus login dulu!");
 
     try {
-      const response = await axios.post(`${API_URL}/request-withdraw`, {
+      const response = await axios.post(`${API_URL}/api/request-withdraw`, {
         telegramId: user.id,
       });
 
