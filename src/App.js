@@ -122,6 +122,7 @@ function App() {
               🎁 Klaim Harian
             </button>
 
+            {/* Tombol Withdraw dengan pengecekan saldo */}
             <button
               onClick={() => {
                 axios
@@ -140,7 +141,12 @@ function App() {
                   })
                   .catch((err) => console.error("Error withdrawing:", err));
               }}
-              className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-48 text-white font-semibold"
+              disabled={balance < 50000} // Menonaktifkan tombol jika saldo kurang dari 50.000
+              className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
+                balance < 50000
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
             >
               💸 Withdraw
             </button>
