@@ -11,19 +11,38 @@ function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [nonce, setNonce] = useState("");
-  const tg = window.Telegram.WebApp;
+  const tg = window.Telegram ? window.Telegram.WebApp : null;
 
   useEffect(() => {
-    tg.expand(); // Memperluas tampilan WebApp di Telegram
+    if (!tg) {
+      console.error("❌ Telegram WebApp tidak tersedia!");
+      alert("Harap buka aplikasi ini dari Telegram Mini Apps.");
+      return;
+    }
 
-    const initData = tg.initData; // Data autentikasi Telegram
-    if (!initData) return;
+    tg.expand(); // Perbesar tampilan
+    console.log("✅ Telegram WebApp terdeteksi!");
+
+    const initData = tg.initData;
+    if (!initData) {
+      console.error("❌ initData tidak ditemukan!");
+      return;
+    }
 
     // Kirim data autentikasi ke backend
-    axios.post(`${API_URL}/auth`, { initData }).then((res) => {
-      setUser(res.data.user);
-      setBalance(res.data.user.balance || 0);
-    });
+    axios
+      .post(`${API_URL}/auth`, { initData })
+      .then((res) => {
+        if (res.data.success) {
+          setUser(res.data.user);
+          setBalance(res.data.user.balance || 0);
+        } else {
+          console.error("❌ Autentikasi gagal:", res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Gagal memuat user:", err);
+      });
   }, []);
 
   const referralLink = user
@@ -102,7 +121,7 @@ function App() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          class="rounded-full w-40 h-40"
+          className="rounded-full w-40 h-40"
         />
       </p>
       <br></br>
