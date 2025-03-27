@@ -33,6 +33,10 @@ function App() {
             setBalance(res.data.balance || 0);
           })
           .catch((err) => console.error("Error fetching user data:", err));
+          console.log(
+            "Sending request to:",
+            process.env.REACT_APP_API_URL + "/user/register"
+          );
       }
     } else {
       console.warn("Telegram WebApp tidak tersedia!");
