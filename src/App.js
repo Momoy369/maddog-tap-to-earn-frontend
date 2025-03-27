@@ -26,6 +26,7 @@ function App() {
         axios
           .post(`${API_URL}/register`, { telegramId: userData.id })
           .then((res) => {
+            console.log("API Response:", res.data);
             setUser(userData);
             setBalance(res.data.balance || 0);
             setReferralCode(res.data.referralCode ?? "Belum tersedia");
@@ -36,7 +37,10 @@ function App() {
               res.data.lastClaimed ? new Date(res.data.lastClaimed) : null
             );
           })
-          .catch(() => setReferralCode("Gagal memuat"));
+          .catch((err) => {
+            console.error("Error fetching user data:", err);
+            setReferralCode("Gagal memuat");
+          });
       }
     }
   }, []);
@@ -54,18 +58,13 @@ function App() {
     alert("Kode referral berhasil disalin! 📋");
   };
 
-  const handleTap = (e) => {
-    const newTap = {
-      id: Date.now(),
-      x: e.clientX,
-      y: e.clientY,
-      value: "+1",
-    };
-    setTaps((prev) => [...prev, newTap]);
-    setBalance((prev) => prev + 1);
+  const handleTap = () => {
+    const newTap = { id: Date.now(), value: "+1" };
+    setTaps([...taps, newTap]);
     setTimeout(() => {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
     }, 1000);
+    setBalance((prev) => prev + 1);
   };
 
   return (
@@ -75,26 +74,30 @@ function App() {
           🚀 Maddog Token Tap-to-Earn
         </h1>
 
-        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md relative">
-          <img
-            src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-            alt="Maddog Token"
-            className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
-            onClick={handleTap}
-          />
-          {taps.map((tap) => (
-            <motion.span
-              key={tap.id}
-              initial={{ opacity: 1, y: 0 }}
-              animate={{ opacity: 0, y: -50 }}
-              transition={{ duration: 1 }}
-              className="absolute text-yellow-400 font-bold text-lg"
-              style={{ left: tap.x, top: tap.y }}
-            >
-              {tap.value}
-            </motion.span>
-          ))}
-
+        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="relative" onClick={handleTap}>
+            <img
+              src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+              alt="Maddog Token"
+              className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
+            />
+            {taps.map((tap) => (
+              <motion.div
+                key={tap.id}
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 0, y: -30 }}
+                transition={{ duration: 1 }}
+                className="absolute text-green-400 font-bold"
+                style={{
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                {tap.value}
+              </motion.div>
+            ))}
+          </div>
           <p>
             Last Withdraw:{" "}
             {lastWithdraw
@@ -106,7 +109,7 @@ function App() {
             {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
           </p>
 
-          <div className="flex w-full space-x-2 mt-3">
+          <div className="mt-3 flex space-x-4 w-full">
             <button
               onClick={() => {
                 axios
@@ -126,7 +129,6 @@ function App() {
             >
               🎁 Klaim Harian
             </button>
-
             <button
               onClick={() => {
                 axios
@@ -157,6 +159,9 @@ function App() {
               <p className="text-2xl font-bold text-green-400 my-2">
                 💰 {balance} Coins
               </p>
+              <div className="mt-4">
+                <WalletMultiButton />
+              </div>
               <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
                 <p className="text-lg font-semibold">🔗 Kode Referral</p>
                 <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
