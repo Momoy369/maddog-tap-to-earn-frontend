@@ -201,7 +201,6 @@ function App() {
             </p>
             <div className="mt-4">
               <WalletProviderComponent>
-                <WalletMultiButton />
               </WalletProviderComponent>
             </div>
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
