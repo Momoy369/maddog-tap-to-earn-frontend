@@ -254,7 +254,9 @@ function App() {
         )}
       </div>
 
-      <Leaderboard />
+      <div className="mt-8 w-full max-w-2xl">
+        <Leaderboard />
+      </div>
     </div>
   );
 }
