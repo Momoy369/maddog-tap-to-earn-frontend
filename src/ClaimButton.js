@@ -7,8 +7,14 @@ const ClaimButton = ({ points }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClaim = async () => {
-    if (!publicKey) return alert("Hubungkan wallet terlebih dahulu!");
-    if (points < 500) return alert("Minimal 500 poin untuk withdraw!");
+    if (!publicKey) {
+      alert("Hubungkan wallet terlebih dahulu!");
+      return;
+    }
+    if (points < 500) {
+      alert("Minimal 500 poin untuk withdraw!");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -19,16 +25,20 @@ const ClaimButton = ({ points }) => {
 
       alert(`Transaksi sukses! TX: ${response.data.txHash}`);
     } catch (error) {
+      console.error("Error during claim:", error);
       alert(error.response?.data?.error || "Gagal klaim token!");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <button
       onClick={handleClaim}
-      disabled={loading}
-      className="p-3 bg-green-600 text-white rounded-lg"
+      disabled={loading || !publicKey} // Disable tombol jika wallet belum terhubung
+      className={`p-3 rounded-lg ${
+        loading || !publicKey ? "bg-gray-500" : "bg-green-600 text-white"
+      }`}
     >
       {loading ? "Processing..." : "Claim Token"}
     </button>
