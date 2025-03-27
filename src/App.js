@@ -3,6 +3,7 @@ import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { motion } from "framer-motion";
 
 const API_URL = "https://maddog-token.site/user";
 
@@ -12,6 +13,7 @@ function App() {
   const [referralCode, setReferralCode] = useState("Memuat...");
   const [lastWithdraw, setLastWithdraw] = useState(null);
   const [lastClaimed, setLastClaimed] = useState(null);
+  const [taps, setTaps] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -52,31 +54,59 @@ function App() {
     alert("Kode referral berhasil disalin! 📋");
   };
 
+  const handleTap = (e) => {
+    const newTap = {
+      id: Date.now(),
+      x: e.clientX,
+      y: e.clientY,
+      value: "+1",
+    };
+    setTaps((prev) => [...prev, newTap]);
+    setBalance((prev) => prev + 1);
+    setTimeout(() => {
+      setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
+    }, 1000);
+  };
+
   return (
     <WalletProviderComponent>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 space-y-6">
-        <h1 className="text-4xl font-bold text-center">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+        <h1 className="text-4xl font-bold text-center mb-6">
           🚀 Maddog Token Tap-to-Earn
         </h1>
 
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-lg text-center">
+        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md relative">
           <img
             src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
             alt="Maddog Token"
-            className="rounded-full w-24 h-24 mx-auto shadow-md mb-4"
+            className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
+            onClick={handleTap}
           />
-          <p className="text-sm text-gray-400">
+          {taps.map((tap) => (
+            <motion.span
+              key={tap.id}
+              initial={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 0, y: -50 }}
+              transition={{ duration: 1 }}
+              className="absolute text-yellow-400 font-bold text-lg"
+              style={{ left: tap.x, top: tap.y }}
+            >
+              {tap.value}
+            </motion.span>
+          ))}
+
+          <p>
             Last Withdraw:{" "}
             {lastWithdraw
               ? lastWithdraw.toLocaleString()
               : "Belum pernah withdraw"}
           </p>
-          <p className="text-sm text-gray-400">
+          <p>
             Last Claimed:{" "}
             {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
           </p>
 
-          <div className="mt-4 space-y-3">
+          <div className="flex w-full space-x-2 mt-3">
             <button
               onClick={() => {
                 axios
@@ -89,9 +119,10 @@ function App() {
                       setLastClaimed(new Date(res.data.lastClaimed));
                       alert("Daily reward berhasil diklaim!");
                     }
-                  });
+                  })
+                  .catch((err) => console.error("Error claiming reward:", err));
               }}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold"
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-1/2 text-white font-semibold"
             >
               🎁 Klaim Harian
             </button>
@@ -111,23 +142,22 @@ function App() {
                       setLastWithdraw(new Date(res.data.lastWithdraw));
                       alert("Withdraw berhasil!");
                     }
-                  });
+                  })
+                  .catch((err) => console.error("Error withdrawing:", err));
               }}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-1/2 text-white font-semibold"
             >
               💸 Withdraw
             </button>
           </div>
 
           {user ? (
-            <div className="mt-6">
+            <div className="text-center">
               <p className="text-lg font-semibold">👤 {user.username}</p>
               <p className="text-2xl font-bold text-green-400 my-2">
                 💰 {balance} Coins
               </p>
-              <WalletMultiButton className="mt-4" />
-
-              <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+              <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
                 <p className="text-lg font-semibold">🔗 Kode Referral</p>
                 <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
                   {referralCode}
@@ -145,7 +175,7 @@ function App() {
           )}
         </div>
 
-        <div className="w-full max-w-2xl">
+        <div className="mt-8 w-full max-w-2xl">
           <Leaderboard />
         </div>
       </div>
