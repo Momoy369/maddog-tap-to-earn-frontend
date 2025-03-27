@@ -54,5 +54,3 @@ const WalletHandler = () => {
 
   return <WalletMultiButton />;
 };
-
-export default WalletProviderComponent;
