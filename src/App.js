@@ -15,6 +15,7 @@ function App() {
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
+      tg.ready(); // Pastikan WebApp siap sebelum mengambil data
       tg.expand();
       const userData = tg.initDataUnsafe?.user;
 
@@ -24,7 +25,8 @@ function App() {
           .then((res) => {
             setUser(userData);
             setBalance(res.data.balance || 0);
-          });
+          })
+          .catch((err) => console.error("Error fetching user data:", err));
       }
     } else {
       console.warn("Telegram WebApp tidak tersedia!");
@@ -42,11 +44,16 @@ function App() {
       .then((res) => setBalance(res.data.balance));
   };
 
-  const handleTap = () => {
+  const handleTap = async () => {
     if (!user) return;
-    axios
-      .post(`${API_URL}/tap`, { telegramId: user.id })
-      .then((res) => setBalance(res.data.balance));
+
+    try {
+      const res = await axios.post(`${API_URL}/tap`, { telegramId: user.id });
+      setBalance(res.data.balance);
+    } catch (error) {
+      console.error("Error saat TAP:", error);
+      alert("Gagal TAP, coba lagi nanti.");
+    }
   };
 
   const handleWithdraw = async () => {
@@ -87,6 +94,7 @@ function App() {
 
       if (response.data.success) {
         alert("Kode konfirmasi telah dikirim ke Telegram Anda.");
+        setNonce(""); // Reset nonce setelah meminta kode
       } else {
         alert("Gagal mengirim kode. Coba lagi.");
       }
@@ -107,7 +115,7 @@ function App() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          class="rounded-full w-40 h-40"
+          className="rounded-full w-40 h-40"
         />
       </p>
       <br></br>
