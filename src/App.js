@@ -13,6 +13,8 @@ function App() {
   const [balance, setBalance] = useState(0);
   const [taps, setTaps] = useState([]);
   const [referralCode, setReferralCode] = useState("Memuat...");
+  const [lastWithdraw, setLastWithdraw] = useState(null);
+  const [lastClaimed, setLastClaimed] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
