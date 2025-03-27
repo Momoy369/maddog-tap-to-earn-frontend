@@ -57,6 +57,7 @@ function App() {
             console.log("API Response:", res.data);
             setUser(userData);
             setBalance(res.data.balance || 0);
+            // Generate referral link using the user ID
             setReferralLink(`https://t.me/your_bot_name?start=${userData.id}`);
             setLastWithdraw(
               res.data.lastWithdraw ? new Date(res.data.lastWithdraw) : null
@@ -216,7 +217,7 @@ function App() {
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
               <p className="text-lg font-semibold">🔗 Kode Referral</p>
               <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
-                {referralCode}
+                {referralLink}
               </p>
               <button
                 onClick={copyReferralCode}
