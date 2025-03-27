@@ -11,9 +11,8 @@ function App() {
   const [balance, setBalance] = useState(0);
   const [referralCode, setReferralCode] = useState("Memuat...");
   const [taps, setTaps] = useState([]);
-  const [lastWithdraw, setLastWithdraw] = useState(null);
-  const [lastClaimed, setLastClaimed] = useState(null);
   const [isShaking, setIsShaking] = useState(false);
+  const [tapPosition, setTapPosition] = useState({ x: 0, y: 0 });
   const [walletAddress, setWalletAddress] = useState("");
   const [showWalletInput, setShowWalletInput] = useState(false);
 
@@ -35,7 +34,6 @@ function App() {
           alert(res.data.error);
         } else {
           setBalance(res.data.balance);
-          setLastWithdraw(new Date(res.data.lastWithdraw));
           alert("Withdraw berhasil!");
         }
       })
@@ -119,11 +117,13 @@ function App() {
 
         <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
           <img
-            ref={imageRef}
             src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
             alt="Maddog Token"
-            className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
+            className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
+              isShaking ? "animate-shake" : ""
+            }`}
             onClick={handleTap}
+            ref={imageRef}
           />
           <p>
             Last Withdraw:{" "}
@@ -159,7 +159,7 @@ function App() {
 
             <button
               onClick={handleWithdraw}
-              disabled={balance < 50000 || !walletAddress}
+              disabled={balance < 50000 || !walletAddress} // Disable if balance is insufficient or no wallet address
               className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
                 balance < 50000 || !walletAddress
                   ? "bg-gray-400 cursor-not-allowed"
@@ -180,7 +180,7 @@ function App() {
                 className="w-full p-2 rounded-lg text-black"
                 placeholder="Alamat wallet"
                 value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
+                onChange={(e) => setWalletAddress(e.target.value)} // Update wallet address
               />
               <button
                 onClick={handleWithdraw}
@@ -191,53 +191,53 @@ function App() {
             </div>
           )}
 
-          <div className="mt-8 w-full max-w-2xl">
-            <Leaderboard />
-          </div>
+          {user ? (
+            <div className="text-center">
+              <p className="text-lg font-semibold">👤 {user.username}</p>
+              <p className="text-2xl font-bold text-green-400 my-2">
+                💰 {balance} Coins
+              </p>
+              <div className="mt-4">
+                <WalletMultiButton />
+              </div>
+              <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
+                <p className="text-lg font-semibold">🔗 Kode Referral</p>
+                <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
+                  {referralCode}
+                </p>
+                <button
+                  onClick={copyReferralCode}
+                  className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
+                >
+                  📋 Salin Kode
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-6 text-lg">Loading...</p>
+          )}
         </div>
 
-        {user ? (
-          <div className="text-center">
-            <p className="text-lg font-semibold">👤 {user.username}</p>
-            <p className="text-2xl font-bold text-green-400 my-2">
-              💰 {balance} Coins
-            </p>
-            <div className="mt-4">
-              <WalletMultiButton />
+        {/* Menambahkan animasi angka yang melayang */}
+        <div className="relative">
+          {taps.map((tap) => (
+            <div
+              key={tap.id}
+              className="absolute text-green-500 text-xl animate-fadeUp"
+              style={{
+                left: `${tap.x}px`,
+                top: `${tap.y}px`,
+                animationDuration: "1s",
+              }}
+            >
+              {tap.value}
             </div>
-            <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
-              <p className="text-lg font-semibold">🔗 Kode Referral</p>
-              <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
-                {referralCode}
-              </p>
-              <button
-                onClick={copyReferralCode}
-                className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
-              >
-                📋 Salin Kode
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p className="mt-6 text-lg">Loading...</p>
-        )}
-      </div>
+          ))}
+        </div>
 
-      {/* Menambahkan animasi angka yang melayang */}
-      <div className="relative">
-        {taps.map((tap) => (
-          <div
-            key={tap.id}
-            className="absolute text-green-500 text-xl animate-fadeUp"
-            style={{
-              left: `${tap.x}px`,
-              top: `${tap.y}px`,
-              animationDuration: "1s",
-            }}
-          >
-            {tap.value}
-          </div>
-        ))}
+        <div className="mt-8 w-full max-w-2xl">
+          <Leaderboard />
+        </div>
       </div>
     </WalletProviderComponent>
   );
