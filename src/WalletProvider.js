@@ -32,7 +32,7 @@ const WalletProviderComponent = ({ children }) => {
     if (publicKey) {
       console.log("Wallet Connected:", publicKey.toBase58());
       
-      axios.post("/api/save-wallet", { walletAddress: publicKey.toBase58() });
+      axios.post("/user/save-wallet", { walletAddress: publicKey.toBase58() });
     }
   }, [publicKey]);
 
