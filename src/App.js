@@ -6,11 +6,13 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { motion } from "framer-motion";
 
 const API_URL = "https://maddog-token.site/user";
+const MIN_WITHDRAW = 50000;
 
 function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [taps, setTaps] = useState([]);
+  const [referralCode, setReferralCode] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -25,6 +27,7 @@ function App() {
           .then((res) => {
             setUser(userData);
             setBalance(res.data.balance || 0);
+            setReferralCode(res.data.referralCode || ""); // Set referral code
           })
           .catch((err) => console.error("Error fetching user data:", err));
       }
@@ -68,9 +71,13 @@ function App() {
     }
   };
 
-  // Handle Withdraw
+  // Handle Withdraw (minimal 50,000 poin)
   const handleWithdraw = async () => {
     if (!user) return;
+    if (balance < MIN_WITHDRAW) {
+      alert(`Minimal withdraw adalah ${MIN_WITHDRAW} coins!`);
+      return;
+    }
     try {
       const res = await axios.post(`${API_URL}/withdraw`, {
         telegramId: user.id,
@@ -80,6 +87,13 @@ function App() {
     } catch (error) {
       alert("Gagal withdraw, coba lagi nanti.");
     }
+  };
+
+  // Handle Copy Referral Code
+  const copyReferralCode = () => {
+    if (!referralCode) return;
+    navigator.clipboard.writeText(referralCode);
+    alert("Kode referral berhasil disalin! 📋");
   };
 
   return (
@@ -117,9 +131,28 @@ function App() {
                 </button>
                 <button
                   onClick={handleWithdraw}
-                  className="px-4 py-3 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold"
+                  className={`px-4 py-3 ${
+                    balance >= MIN_WITHDRAW
+                      ? "bg-green-500 hover:bg-green-600"
+                      : "bg-gray-500 cursor-not-allowed"
+                  } transition-all rounded-lg w-full text-white font-semibold`}
+                  disabled={balance < MIN_WITHDRAW}
                 >
                   Withdraw
+                </button>
+              </div>
+
+              {/* Referral Section */}
+              <div className="mt-6 bg-gray-700 p-4 rounded-lg text-center w-full">
+                <p className="text-lg font-semibold">🔗 Kode Referral</p>
+                <p className="bg-gray-900 text-white py-2 px-4 rounded-lg mt-2">
+                  {referralCode || "Memuat..."}
+                </p>
+                <button
+                  onClick={copyReferralCode}
+                  className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
+                >
+                  📋 Salin Kode
                 </button>
               </div>
             </div>
