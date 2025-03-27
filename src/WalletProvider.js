@@ -3,6 +3,7 @@ import axios from "axios";
 import {
   ConnectionProvider,
   WalletProvider,
+  useWallet
 } from "@solana/wallet-adapter-react";
 import {
   WalletModalProvider,
