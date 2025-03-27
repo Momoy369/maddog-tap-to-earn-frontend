@@ -31,7 +31,9 @@ function App() {
     }
   }, []);
 
-  const referralLink = user ? `https://t.me/YOUR_BOT?start=${user.id}` : "";
+  const referralLink = user
+    ? `https://t.me/maddog_token_bot?start=${user.id}`
+    : "";
 
   const claimDailyReward = () => {
     if (!user) return alert("User belum login!");
