@@ -33,16 +33,11 @@ function App() {
             setBalance(res.data.balance || 0);
           })
           .catch((err) => console.error("Error fetching user data:", err));
-          console.log(
-            "Sending request to:",
-            process.env.REACT_APP_API_URL + "/user/register"
-          );
       }
     } else {
       console.warn("Telegram WebApp tidak tersedia!");
     }
   }, []);
-
 
   const referralLink = user
     ? `https://t.me/maddog_token_bot?start=${user.id}`
@@ -118,7 +113,7 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-2xl font-bold">
+      <h1 className="text-2xl font-bold text-center">
         🚀 Tap-to-Earn Maddog Token Meme Coin
       </h1>
       <br></br>
