@@ -13,26 +13,32 @@ function App() {
   const [nonce, setNonce] = useState("");
 
   useEffect(() => {
-    if (!window.Telegram || !window.Telegram.WebApp) {
+    console.log("Checking Telegram WebApp:", window.Telegram);
+    console.log("Checking Telegram WebApp.Data:", window.Telegram?.WebApp);
+
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+      console.log("Telegram WebApp Terdeteksi!");
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
+
+      const userData = tg.initDataUnsafe?.user;
+      console.log("User Data:", userData);
+
+      if (userData) {
+        axios
+          .post(`${API_URL}/register`, { telegramId: userData.id })
+          .then((res) => {
+            setUser(userData);
+            setBalance(res.data.balance || 0);
+          })
+          .catch((err) => console.error("Error fetching user data:", err));
+      }
+    } else {
       console.warn("Telegram WebApp tidak tersedia!");
-      return;
-    }
-
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    const userData = tg.initDataUnsafe?.user;
-    if (userData) {
-      axios
-        .post(`${API_URL}/register`, { telegramId: userData.id })
-        .then((res) => {
-          setUser(userData);
-          setBalance(res.data.balance || 0);
-        })
-        .catch((err) => console.error("Error fetching user data:", err));
     }
   }, []);
+
 
   const referralLink = user
     ? `https://t.me/maddog_token_bot?start=${user.id}`
