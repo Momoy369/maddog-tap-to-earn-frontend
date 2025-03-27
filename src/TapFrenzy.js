@@ -30,7 +30,7 @@ function TapFrenzy({ telegramId, updateBalance }) {
   const endGame = () => {
     setIsPlaying(false);
     axios
-      .post(`${API_URL}/api/tap-frenzy`, { telegramId, taps })
+      .post(`${API_URL}/tap-frenzy`, { telegramId, taps })
       .then((res) => updateBalance(res.data.balance));
   };
 

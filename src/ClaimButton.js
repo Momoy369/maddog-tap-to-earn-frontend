@@ -12,7 +12,7 @@ const ClaimButton = ({ points }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_URL}/api/claim-token`, {
+      const response = await axios.post(`${API_URL}/claim-token`, {
         wallet: publicKey.toBase58(),
         points: points,
       });

@@ -8,7 +8,7 @@ function Leaderboard() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/leaderboard`)
+      .get(`${API_URL}/leaderboard`)
       .then((res) => setLeaderboard(res.data))
       .catch((err) => console.error(err));
   }, []);
