@@ -9,7 +9,7 @@ const API_URL = "https://maddog-token.site/user";
 function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [referralCode, setReferralCode] = useState("Memuat...");
+  const [referralLink, setReferralLink] = useState("Memuat...");
   const [taps, setTaps] = useState([]);
   const [isShaking, setIsShaking] = useState(false);
   const [tapPosition, setTapPosition] = useState({ x: 0, y: 0 });
@@ -57,7 +57,7 @@ function App() {
             console.log("API Response:", res.data);
             setUser(userData);
             setBalance(res.data.balance || 0);
-            setReferralCode(res.data.referralCode ?? "Belum tersedia");
+            setReferralLink(`https://t.me/your_bot_name?start=${userData.id}`);
             setLastWithdraw(
               res.data.lastWithdraw ? new Date(res.data.lastWithdraw) : null
             );
@@ -67,7 +67,6 @@ function App() {
           })
           .catch((err) => {
             console.error("Error fetching user data:", err);
-            setReferralCode("Gagal memuat");
           });
       }
     }
@@ -99,16 +98,12 @@ function App() {
   };
 
   const copyReferralCode = () => {
-    if (
-      !referralCode ||
-      referralCode === "Memuat..." ||
-      referralCode === "Belum tersedia"
-    ) {
+    if (referralLink === "Memuat..." || referralLink === "Belum tersedia") {
       alert("Kode referral belum tersedia.");
       return;
     }
-    navigator.clipboard.writeText(referralCode);
-    alert("Kode referral berhasil disalin! 📋");
+    navigator.clipboard.writeText(referralLink);
+    alert("Tautan referral berhasil disalin! 📋");
   };
 
   return (
