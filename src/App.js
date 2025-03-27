@@ -11,45 +11,24 @@ function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [nonce, setNonce] = useState("");
-  const tg = window.Telegram ? window.Telegram.WebApp : null;
 
   useEffect(() => {
-    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.expand();
+      const userData = tg.initDataUnsafe?.user;
 
-    if (!tg) {
-      console.error("❌ Telegram WebApp tidak tersedia!");
-      alert("Harap buka aplikasi ini dari Telegram Mini Apps.");
-      return;
+      if (userData) {
+        axios
+          .post(`${API_URL}/register`, { telegramId: userData.id })
+          .then((res) => {
+            setUser(userData);
+            setBalance(res.data.balance || 0);
+          });
+      }
+    } else {
+      console.warn("Telegram WebApp tidak tersedia!");
     }
-
-    tg.expand(); // Perbesar tampilan WebApp
-
-    console.log("✅ Telegram WebApp terdeteksi:", tg);
-
-    const initData = tg.initData || tg.initDataUnsafe;
-    console.log("🔍 initData dari Telegram:", initData);
-
-    if (!initData) {
-      console.error(
-        "❌ initData tidak ditemukan! Pastikan aplikasi dibuka dari Telegram Mini Apps."
-      );
-      return;
-    }
-
-    // Kirim data autentikasi ke backend
-    axios
-      .post(`${API_URL}/auth`, { initData })
-      .then((res) => {
-        console.log("✅ Autentikasi sukses:", res.data);
-        setUser(res.data.user);
-        setBalance(res.data.user.balance || 0);
-      })
-      .catch((err) => {
-        console.error(
-          "❌ Gagal memuat user:",
-          err.response?.data || err.message
-        );
-      });
   }, []);
 
   const referralLink = user
@@ -128,7 +107,7 @@ function App() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className="rounded-full w-40 h-40"
+          class="rounded-full w-40 h-40"
         />
       </p>
       <br></br>
