@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "https://maddog-token.site/api/game";
+const API_URL = "https://maddog-token.site/game";
 
 function TapFrenzy({ telegramId, updateBalance }) {
   const [taps, setTaps] = useState(0);
