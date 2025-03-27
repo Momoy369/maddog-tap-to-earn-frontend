@@ -11,24 +11,19 @@ function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [nonce, setNonce] = useState("");
+  const tg = window.Telegram.WebApp;
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-      const userData = tg.initDataUnsafe?.user;
+    tg.expand(); // Memperluas tampilan WebApp di Telegram
 
-      if (userData) {
-        axios
-          .post(`${API_URL}/register`, { telegramId: userData.id })
-          .then((res) => {
-            setUser(userData);
-            setBalance(res.data.balance || 0);
-          });
-      }
-    } else {
-      console.warn("Telegram WebApp tidak tersedia!");
-    }
+    const initData = tg.initData; // Data autentikasi Telegram
+    if (!initData) return;
+
+    // Kirim data autentikasi ke backend
+    axios.post(`${API_URL}/auth`, { initData }).then((res) => {
+      setUser(res.data.user);
+      setBalance(res.data.user.balance || 0);
+    });
   }, []);
 
   const referralLink = user
