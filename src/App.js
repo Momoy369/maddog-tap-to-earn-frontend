@@ -18,6 +18,7 @@ function App() {
 
   const [lastWithdraw, setLastWithdraw] = useState(null);
   const [lastClaimed, setLastClaimed] = useState(null);
+  const [hasUsedReferral, setHasUsedReferral] = useState(false);
 
   const imageRef = useRef(null);
 
@@ -51,13 +52,17 @@ function App() {
       const userData = tg.initDataUnsafe?.user;
 
       if (userData) {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrerId = urlParams.get("start");
+
         axios
-          .post(`${API_URL}/register`, { telegramId: userData.id })
+          .post(`${API_URL}/register`, { telegramId: userData.id, referrerId })
           .then((res) => {
             console.log("API Response:", res.data);
             setUser(userData);
             setBalance(res.data.balance || 0);
-            // Generate referral link using the user ID
+            setHasUsedReferral(res.data.hasUsedReferral || false);
             setReferralLink(`https://t.me/your_bot_name?start=${userData.id}`);
             setLastWithdraw(
               res.data.lastWithdraw ? new Date(res.data.lastWithdraw) : null
@@ -123,7 +128,6 @@ function App() {
           onClick={handleTap}
           ref={imageRef}
         />
-        {/* Menambahkan animasi angka yang melayang */}
         <div className="relative">
           {taps.map((tap) => (
             <div
@@ -149,6 +153,12 @@ function App() {
           Last Claimed:{" "}
           {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
         </p>
+
+        {hasUsedReferral && (
+          <p className="text-red-500 mt-2">
+            Anda sudah menggunakan referral sebelumnya.
+          </p>
+        )}
 
         <div className="flex justify-between w-full">
           <button
@@ -223,18 +233,18 @@ function App() {
                 onClick={copyReferralCode}
                 className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
               >
-                📋 Salin Kode
+                Salin Kode Referral
               </button>
             </div>
           </div>
         ) : (
-          <p className="mt-6 text-lg">Loading...</p>
+          <div className="mt-3 text-center">
+            <p>Memuat data pengguna...</p>
+          </div>
         )}
       </div>
 
-      <div className="mt-8 w-full max-w-2xl">
-        <Leaderboard />
-      </div>
+      <Leaderboard />
     </div>
   );
 }
