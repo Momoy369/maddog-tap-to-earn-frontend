@@ -23,7 +23,7 @@ function Leaderboard() {
             className="flex justify-between py-2 border-b border-gray-700"
           >
             <span>
-              {index + 1}. {user.username}
+              {index + 1}. {user.username || user.telegramId}
             </span>
             <span>{user.balance} coins</span>
           </li>
