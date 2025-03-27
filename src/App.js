@@ -3,7 +3,6 @@ import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { motion } from "framer-motion";
 
 const API_URL = "https://maddog-token.site/user";
 
@@ -13,7 +12,7 @@ function App() {
   const [referralCode, setReferralCode] = useState("Memuat...");
   const [lastWithdraw, setLastWithdraw] = useState(null);
   const [lastClaimed, setLastClaimed] = useState(null);
-  const [taps, setTaps] = useState([]);
+  const [taps, setTaps] = useState([]); // Menyimpan data taps untuk animasi
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -45,6 +44,25 @@ function App() {
     }
   }, []);
 
+  const handleTap = () => {
+    const newTap = { id: Date.now(), value: "+1" };
+    setTaps((prevTaps) => [...prevTaps, newTap]);
+
+    // Kirimkan request ke backend untuk memperbarui balance
+    axios
+      .post(`${API_URL}/tap`, { telegramId: user.id }) // Request ke backend
+      .then((res) => {
+        if (res.data) {
+          setBalance((prev) => prev + 1); // Update balance di frontend
+        }
+      })
+      .catch((err) => console.error("Error updating balance:", err));
+
+    setTimeout(() => {
+      setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
+    }, 1000);
+  };
+
   const copyReferralCode = () => {
     if (
       !referralCode ||
@@ -58,15 +76,6 @@ function App() {
     alert("Kode referral berhasil disalin! 📋");
   };
 
-  const handleTap = () => {
-    const newTap = { id: Date.now(), value: "+1" };
-    setTaps([...taps, newTap]);
-    setTimeout(() => {
-      setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
-    }, 1000);
-    setBalance((prev) => prev + 1);
-  };
-
   return (
     <WalletProviderComponent>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
@@ -75,29 +84,12 @@ function App() {
         </h1>
 
         <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
-          <div className="relative" onClick={handleTap}>
-            <img
-              src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-              alt="Maddog Token"
-              className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
-            />
-            {taps.map((tap) => (
-              <motion.div
-                key={tap.id}
-                initial={{ opacity: 1, y: 0 }}
-                animate={{ opacity: 0, y: -30 }}
-                transition={{ duration: 1 }}
-                className="absolute text-green-400 font-bold"
-                style={{
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                {tap.value}
-              </motion.div>
-            ))}
-          </div>
+          <img
+            src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+            alt="Maddog Token"
+            className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
+            onClick={handleTap} // Menambahkan event onClick untuk tap
+          />
           <p>
             Last Withdraw:{" "}
             {lastWithdraw
@@ -109,7 +101,7 @@ function App() {
             {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
           </p>
 
-          <div className="mt-3 flex space-x-4 w-full">
+          <div className="flex justify-between w-full">
             <button
               onClick={() => {
                 axios
@@ -125,16 +117,17 @@ function App() {
                   })
                   .catch((err) => console.error("Error claiming reward:", err));
               }}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-1/2 text-white font-semibold"
+              className="mt-3 px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-48 text-white font-semibold"
             >
               🎁 Klaim Harian
             </button>
+
             <button
               onClick={() => {
                 axios
                   .post(`${API_URL}/withdraw`, {
                     telegramId: user.id,
-                    walletAddress: "your-wallet-address",
+                    walletAddress: "your-wallet-address", // Ganti dengan wallet address
                   })
                   .then((res) => {
                     if (res.data.error) {
@@ -147,7 +140,7 @@ function App() {
                   })
                   .catch((err) => console.error("Error withdrawing:", err));
               }}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-1/2 text-white font-semibold"
+              className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-48 text-white font-semibold"
             >
               💸 Withdraw
             </button>
@@ -178,6 +171,23 @@ function App() {
           ) : (
             <p className="mt-6 text-lg">Loading...</p>
           )}
+        </div>
+
+        {/* Menambahkan animasi angka yang melayang */}
+        <div className="relative">
+          {taps.map((tap) => (
+            <div
+              key={tap.id}
+              className="absolute text-green-500 text-xl animate-fadeUp"
+              style={{
+                left: `${Math.random() * 90 + 5}%`, // Posisi horizontal acak
+                top: `${Math.random() * 30 + 50}%`, // Posisi vertikal acak
+                animationDuration: "1s", // Durasi animasi
+              }}
+            >
+              {tap.value}
+            </div>
+          ))}
         </div>
 
         <div className="mt-8 w-full max-w-2xl">
