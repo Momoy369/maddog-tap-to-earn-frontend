@@ -27,9 +27,13 @@ function App() {
             console.log("API Response:", res.data);
             setUser(userData);
             setBalance(res.data.balance || 0);
-            setReferralCode(res.data.referralCode || "Belum tersedia");
-            setLastWithdraw(res.data.lastWithdraw);
-            setLastClaimed(res.data.lastClaimed);
+            setReferralCode(res.data.referralCode ?? "Belum tersedia");
+            setLastWithdraw(
+              res.data.lastWithdraw ? new Date(res.data.lastWithdraw) : null
+            );
+            setLastClaimed(
+              res.data.lastClaimed ? new Date(res.data.lastClaimed) : null
+            );
           })
           .catch((err) => {
             console.error("Error fetching user data:", err);
@@ -67,12 +71,58 @@ function App() {
           />
           <p>
             Last Withdraw:{" "}
-            {lastWithdraw ? new Date(lastWithdraw).toLocaleString() : "N/A"}
+            {lastWithdraw
+              ? lastWithdraw.toLocaleString()
+              : "Belum pernah withdraw"}
           </p>
           <p>
             Last Claimed:{" "}
-            {lastClaimed ? new Date(lastClaimed).toLocaleString() : "N/A"}
+            {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
           </p>
+
+          <button
+            onClick={() => {
+              axios
+                .post(`${API_URL}/claim`, { telegramId: user.id })
+                .then((res) => {
+                  if (res.data.error) {
+                    alert(res.data.error);
+                  } else {
+                    setBalance(res.data.balance);
+                    setLastClaimed(new Date(res.data.lastClaimed));
+                    alert("Daily reward berhasil diklaim!");
+                  }
+                })
+                .catch((err) => console.error("Error claiming reward:", err));
+            }}
+            className="mt-3 px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold"
+          >
+            🎁 Klaim Harian
+          </button>
+
+          {/* Tombol Withdraw */}
+          <button
+            onClick={() => {
+              axios
+                .post(`${API_URL}/withdraw`, {
+                  telegramId: user.id,
+                  walletAddress: "your-wallet-address",
+                })
+                .then((res) => {
+                  if (res.data.error) {
+                    alert(res.data.error);
+                  } else {
+                    setBalance(res.data.balance);
+                    setLastWithdraw(new Date(res.data.lastWithdraw));
+                    alert("Withdraw berhasil!");
+                  }
+                })
+                .catch((err) => console.error("Error withdrawing:", err));
+            }}
+            className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
+          >
+            💸 Withdraw
+          </button>
 
           {user ? (
             <div className="text-center">
