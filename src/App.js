@@ -4,12 +4,14 @@ import Leaderboard from "./Leaderboard";
 import TapFrenzy from "./TapFrenzy";
 import { WalletProviderComponent } from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { motion } from "framer-motion";
 
 const API_URL = "https://maddog-token.site/user";
 
 function App() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [taps, setTaps] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -30,11 +32,23 @@ function App() {
     }
   }, []);
 
-  const handleTap = async () => {
+  const handleTap = async (event) => {
     if (!user) return;
     try {
       const res = await axios.post(`${API_URL}/tap`, { telegramId: user.id });
       setBalance(res.data.balance);
+
+      const newTap = {
+        id: Date.now(),
+        x: event.clientX,
+        y: event.clientY,
+        value: "+1",
+      };
+      setTaps((prevTaps) => [...prevTaps, newTap]);
+
+      setTimeout(() => {
+        setTaps((prevTaps) => prevTaps.filter((tap) => tap.id !== newTap.id));
+      }, 1000);
     } catch (error) {
       alert("Gagal TAP, coba lagi nanti.");
     }
@@ -42,16 +56,17 @@ function App() {
 
   return (
     <WalletProviderComponent>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 relative">
         <h1 className="text-4xl font-bold text-center mb-6">
           🚀 Maddog Token Tap-to-Earn
         </h1>
 
-        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
+        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md relative">
           <img
             src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
             alt="Maddog Token"
-            className="rounded-full w-28 h-28 shadow-md mb-4"
+            className="rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer"
+            onClick={handleTap}
           />
 
           {user ? (
@@ -60,13 +75,6 @@ function App() {
               <p className="text-2xl font-bold text-green-400 my-2">
                 💰 {balance} Coins
               </p>
-
-              <button
-                onClick={handleTap}
-                className="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 transition-all rounded-lg text-white font-semibold shadow-md"
-              >
-                💥 TAP!
-              </button>
 
               <div className="mt-4 flex justify-center">
                 <WalletMultiButton />
@@ -92,6 +100,19 @@ function App() {
             <TapFrenzy telegramId={user.id} updateBalance={setBalance} />
           )}
         </div>
+
+        {taps.map((tap) => (
+          <motion.span
+            key={tap.id}
+            initial={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0, y: -50 }}
+            transition={{ duration: 1 }}
+            className="absolute text-lg font-bold text-green-400"
+            style={{ top: tap.y, left: tap.x }}
+          >
+            {tap.value}
+          </motion.span>
+        ))}
       </div>
     </WalletProviderComponent>
   );
