@@ -29,13 +29,16 @@ export const WalletProviderComponent = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+          <WalletHandler />
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
 };
 
-// ⬇️ Komponen ini akan dipanggil di dalam WalletProviderComponent
+
 const WalletHandler = () => {
   const { publicKey } = useWallet();
 

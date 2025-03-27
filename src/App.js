@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import TapFrenzy from "./TapFrenzy";
-import * as WalletProvider from "./WalletProvider";
+import { WalletProviderComponent } from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const API_URL = "https://maddog-token.site/user";
@@ -41,7 +41,7 @@ function App() {
   };
 
   return (
-    <WalletProvider.WalletProviderComponent>
+    <WalletProviderComponent>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-4">
           🚀 Maddog Token Tap-to-Earn
@@ -86,7 +86,7 @@ function App() {
         <Leaderboard />
         {user && <TapFrenzy telegramId={user.id} updateBalance={setBalance} />}
       </div>
-    </WalletProvider.WalletProviderComponent>
+    </WalletProviderComponent>
   );
 }
 
