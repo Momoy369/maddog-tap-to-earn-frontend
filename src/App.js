@@ -13,17 +13,11 @@ function App() {
   const [nonce, setNonce] = useState("");
 
   useEffect(() => {
-    console.log("Checking Telegram WebApp:", window.Telegram);
-    console.log("Checking Telegram WebApp.Data:", window.Telegram?.WebApp);
-
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-      console.log("Telegram WebApp Terdeteksi!");
       const tg = window.Telegram.WebApp;
       tg.ready();
       tg.expand();
-
       const userData = tg.initDataUnsafe?.user;
-      console.log("User Data:", userData);
 
       if (userData) {
         axios
@@ -34,8 +28,6 @@ function App() {
           })
           .catch((err) => console.error("Error fetching user data:", err));
       }
-    } else {
-      console.warn("Telegram WebApp tidak tersedia!");
     }
   }, []);
 
@@ -43,149 +35,67 @@ function App() {
     ? `https://t.me/maddog_token_bot?start=${user.id}`
     : "";
 
-  const claimDailyReward = () => {
-    if (!user) return alert("User belum login!");
-    axios
-      .post(`${API_URL}/daily-reward`, { telegramId: user.id })
-      .then((res) => setBalance(res.data.balance));
-  };
-
   const handleTap = async () => {
     if (!user) return;
-
     try {
       const res = await axios.post(`${API_URL}/tap`, { telegramId: user.id });
       setBalance(res.data.balance);
     } catch (error) {
-      console.error("Error saat TAP:", error);
       alert("Gagal TAP, coba lagi nanti.");
     }
   };
 
-  const handleWithdraw = async () => {
-    if (balance < 500) {
-      return alert("Saldo minimal 500 coins untuk withdraw!");
-    }
-
-    const wallet = prompt("Masukkan alamat Solana wallet:");
-    if (!wallet) return;
-
-    try {
-      const response = await axios.post(`${API_URL}/withdraw`, {
-        telegramId: user.id,
-        wallet: wallet,
-        nonce: nonce,
-      });
-
-      if (response.data.success) {
-        alert("Withdraw berhasil!");
-        setBalance(response.data.newBalance);
-      } else {
-        alert("Withdraw gagal: " + response.data.message);
-      }
-    } catch (error) {
-      alert(
-        "Terjadi kesalahan: " + (error.response?.data?.message || error.message)
-      );
-    }
-  };
-
-  const requestWithdraw = async () => {
-    if (!user) return alert("Anda harus login dulu!");
-
-    try {
-      const response = await axios.post(`${API_URL}/request-withdraw`, {
-        telegramId: user.id,
-      });
-
-      if (response.data.success) {
-        alert("Kode konfirmasi telah dikirim ke Telegram Anda.");
-        setNonce(""); // Reset nonce setelah meminta kode
-      } else {
-        alert("Gagal mengirim kode. Coba lagi.");
-      }
-    } catch (error) {
-      alert(
-        "Terjadi kesalahan: " + (error.response?.data?.message || error.message)
-      );
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-2xl font-bold text-center">
-        🚀 Tap-to-Earn Maddog Token Meme Coin
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-4">
+        🚀 Maddog Token Tap-to-Earn
       </h1>
-      <br></br>
-      <p>
-        <img
-          src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-          alt="Maddog Token"
-          className="rounded-full w-40 h-40"
-        />
-      </p>
-      <br></br>
+      <img
+        src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+        alt="Maddog Token"
+        className="rounded-full w-32 h-32 shadow-lg"
+      />
+
       {user ? (
-        <>
-          <p className="mt-2">👤 {user.username}</p>
-          <p className="mt-2">💰 Balance: {balance} coins</p>
+        <div className="mt-6 w-full max-w-lg p-6 bg-gray-800 rounded-lg shadow-md text-center">
+          <p className="text-lg font-semibold">👤 {user.username}</p>
+          <p className="text-xl font-bold text-green-400">💰 {balance} Coins</p>
+
           <button
             onClick={handleTap}
-            className="mt-4 px-6 py-3 bg-blue-500 rounded-lg"
+            className="mt-4 w-full py-3 bg-blue-500 hover:bg-blue-600 transition rounded-lg text-white font-semibold shadow-md"
           >
             💥 TAP!
           </button>
-          <button
-            onClick={handleWithdraw}
-            className="mt-4 px-6 py-3 bg-green-500 rounded-lg"
-          >
-            Withdraw
-          </button>
-
-          <button
-            onClick={requestWithdraw}
-            className="mt-4 px-6 py-3 bg-orange-500 rounded-lg"
-          >
-            📩 Minta Kode Withdraw
-          </button>
-
-          <input
-            type="text"
-            placeholder="Masukkan kode nonce"
-            value={nonce}
-            onChange={(e) => setNonce(e.target.value)}
-            className="mt-2 p-2 bg-gray-700 text-white rounded-lg"
-          />
 
           <WalletProviderComponent>
-            <div className="p-6 bg-gray-900 text-white min-h-screen">
-              <h1 className="text-2xl font-bold">🚀 Solana Tap-to-Earn</h1>
+            <div className="mt-4">
               <WalletMultiButton />
             </div>
           </WalletProviderComponent>
 
-          <p className="mt-4">🔗 Share your referral link:</p>
           <input
             type="text"
             value={referralLink}
             readOnly
-            className="mt-2 p-2 bg-gray-700 text-white rounded-lg"
+            className="mt-4 w-full p-2 bg-gray-700 text-white rounded-lg text-center"
           />
 
-          <button
-            onClick={claimDailyReward}
-            className="mt-4 px-6 py-3 bg-yellow-500 rounded-lg"
-          >
-            🎁 Claim Daily Reward
-          </button>
-
-          {/* Perbaiki cara render komponen ini */}
-          <Leaderboard />
-          <TapFrenzy telegramId={user.id} updateBalance={setBalance} />
-        </>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 transition rounded-lg">
+              🎁 Daily Reward
+            </button>
+            <button className="px-4 py-2 bg-green-500 hover:bg-green-600 transition rounded-lg">
+              Withdraw
+            </button>
+          </div>
+        </div>
       ) : (
-        <p>Loading...</p>
+        <p className="mt-6">Loading...</p>
       )}
+
+      <Leaderboard />
+      {user && <TapFrenzy telegramId={user.id} updateBalance={setBalance} />}
     </div>
   );
 }
