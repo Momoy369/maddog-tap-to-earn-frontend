@@ -16,6 +16,9 @@ function App() {
   const [walletAddress, setWalletAddress] = useState("");
   const [showWalletInput, setShowWalletInput] = useState(false);
 
+  const [lastWithdraw, setLastWithdraw] = useState(null);
+  const [lastClaimed, setLastClaimed] = useState(null);
+
   const imageRef = useRef(null);
 
   const handleWithdraw = () => {
