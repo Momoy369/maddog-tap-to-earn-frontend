@@ -127,6 +127,22 @@ function App() {
           onClick={handleTap}
           ref={imageRef}
         />
+        {/* Menambahkan animasi angka yang melayang */}
+        <div className="relative">
+          {taps.map((tap) => (
+            <div
+              key={tap.id}
+              className="absolute text-green-500 text-xl animate-fadeUp"
+              style={{
+                left: `${tap.x}px`,
+                top: `${tap.y}px`,
+                animationDuration: "1s",
+              }}
+            >
+              {tap.value}
+            </div>
+          ))}
+        </div>
         <p>
           Last Withdraw:{" "}
           {lastWithdraw
@@ -200,8 +216,7 @@ function App() {
               💰 {balance} Coins
             </p>
             <div className="mt-4">
-              <WalletProviderComponent>
-              </WalletProviderComponent>
+              <WalletProviderComponent></WalletProviderComponent>
             </div>
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
               <p className="text-lg font-semibold">🔗 Kode Referral</p>
@@ -219,23 +234,6 @@ function App() {
         ) : (
           <p className="mt-6 text-lg">Loading...</p>
         )}
-      </div>
-
-      {/* Menambahkan animasi angka yang melayang */}
-      <div className="relative">
-        {taps.map((tap) => (
-          <div
-            key={tap.id}
-            className="absolute text-green-500 text-xl animate-fadeUp"
-            style={{
-              left: `${tap.x}px`,
-              top: `${tap.y}px`,
-              animationDuration: "1s",
-            }}
-          >
-            {tap.value}
-          </div>
-        ))}
       </div>
 
       <div className="mt-8 w-full max-w-2xl">
