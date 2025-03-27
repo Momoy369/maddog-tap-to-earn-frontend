@@ -52,7 +52,6 @@ function App() {
       const userData = tg.initDataUnsafe?.user;
 
       if (userData) {
-
         const urlParams = new URLSearchParams(window.location.search);
         const referrerId = urlParams.get("start");
 
@@ -63,7 +62,9 @@ function App() {
             setUser(userData);
             setBalance(res.data.balance || 0);
             setHasUsedReferral(res.data.hasUsedReferral || false);
-            setReferralLink(`https://t.me/your_bot_name?start=${userData.id}`);
+            setReferralLink(
+              `https://t.me/maddog_token_bot?start=${userData.id}`
+            );
             setLastWithdraw(
               res.data.lastWithdraw ? new Date(res.data.lastWithdraw) : null
             );
