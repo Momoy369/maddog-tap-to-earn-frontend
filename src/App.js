@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
-import TapFrenzy from "./TapFrenzy";
 import { WalletProviderComponent } from "./WalletProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { motion } from "framer-motion";
@@ -32,6 +31,7 @@ function App() {
     }
   }, []);
 
+  // Handle Tap Animation & Coin Update
   const handleTap = async (event) => {
     if (!user) return;
     try {
@@ -54,10 +54,37 @@ function App() {
     }
   };
 
+  // Handle Daily Reward
+  const claimDailyReward = async () => {
+    if (!user) return;
+    try {
+      const res = await axios.post(`${API_URL}/daily-reward`, {
+        telegramId: user.id,
+      });
+      setBalance(res.data.balance);
+      alert("Daily Reward berhasil diklaim! 🎁");
+    } catch (error) {
+      alert("Gagal klaim Daily Reward, coba lagi nanti.");
+    }
+  };
+
+  // Handle Withdraw
+  const handleWithdraw = async () => {
+    if (!user) return;
+    try {
+      const res = await axios.post(`${API_URL}/withdraw`, {
+        telegramId: user.id,
+      });
+      setBalance(res.data.balance);
+      alert("Withdraw berhasil! 💸");
+    } catch (error) {
+      alert("Gagal withdraw, coba lagi nanti.");
+    }
+  };
+
   return (
     <WalletProviderComponent>
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 relative">
-        <p></p>
         <h1 className="text-4xl font-bold text-center mb-6">
           🚀 Maddog Token Tap-to-Earn
         </h1>
@@ -82,10 +109,16 @@ function App() {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-6">
-                <button className="px-4 py-3 bg-yellow-500 hover:bg-yellow-600 transition-all rounded-lg w-full text-white font-semibold">
+                <button
+                  onClick={claimDailyReward}
+                  className="px-4 py-3 bg-yellow-500 hover:bg-yellow-600 transition-all rounded-lg w-full text-white font-semibold"
+                >
                   🎁 Daily Reward
                 </button>
-                <button className="px-4 py-3 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold">
+                <button
+                  onClick={handleWithdraw}
+                  className="px-4 py-3 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-full text-white font-semibold"
+                >
                   Withdraw
                 </button>
               </div>
@@ -97,9 +130,6 @@ function App() {
 
         <div className="mt-8 w-full max-w-2xl">
           <Leaderboard />
-          {user && (
-            <TapFrenzy telegramId={user.id} updateBalance={setBalance} />
-          )}
         </div>
 
         {taps.map((tap) => (
