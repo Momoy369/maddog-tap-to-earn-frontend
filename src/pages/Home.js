@@ -12,7 +12,7 @@ const MAX_ENERGY = 50000;
 const REFILL_TIME = 3 * 60 * 60; // 3 jam dalam detik
 const ENERGY_PER_SECOND = MAX_ENERGY / REFILL_TIME;
 
-export function Home() {
+export default function Home() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [referralLink, setReferralLink] = useState("Memuat...");
@@ -235,7 +235,7 @@ export function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+    <div className="flex flex-col items-center justify-center bg-gray-900 text-white px-6 py-10">
       <h1 className="text-4xl font-bold text-center mb-6">
         🚀 Maddog Token Tap-to-Earn
       </h1>
@@ -374,5 +374,3 @@ export function Home() {
     </div>
   );
 }
-
-export default Home;
