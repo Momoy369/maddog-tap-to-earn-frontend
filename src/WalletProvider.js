@@ -22,7 +22,10 @@ export const WalletProviderComponent = ({ children }) => {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+    () => [
+      new PhantomWalletAdapter({ deepLink: true }),
+      new SolflareWalletAdapter({ deepLink: true }),
+    ],
     []
   );
 
@@ -41,6 +44,7 @@ export const WalletProviderComponent = ({ children }) => {
 };
 
 const WalletHandler = () => {
+  const { publicKey } = useWallet();
   const wallet = useWallet();
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
