@@ -25,7 +25,13 @@ function App() {
   const [solBalance, setSolBalance] = useState(null);
   const { publicKey, sendTransaction, connected } = useWallet();
 
-  const [energy, setEnergy] = useState(50000);
+  const [energy, setEnergy] = useState(() => {
+    return parseInt(localStorage.getItem("energy")) || 50000;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("energy", energy);
+  }, [energy]);
 
   const imageRef = useRef(null);
 
@@ -121,10 +127,20 @@ function App() {
   }, []);
 
   const handleTap = (e) => {
-    if (energy <= 0) {
-      alert("Energi habis! Tunggu 3 jam agar energi terisi kembali.");
+    if (energy > 0) {
+      setEnergy((prevEnergy) => Math.max(prevEnergy - 1, 0));
+    } else {
+      alert("Energi habis! Tunggu hingga energi terisi kembali.");
       return;
     }
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setEnergy(50000);
+      }, 3 * 60 * 60 * 1000);
+
+      return () => clearInterval(interval);
+    }, []);
 
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
