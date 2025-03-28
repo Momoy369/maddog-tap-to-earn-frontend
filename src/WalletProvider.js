@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import { useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
-  useWallet,
 } from "@solana/wallet-adapter-react";
 import {
   WalletModalProvider,
@@ -22,14 +20,9 @@ export const WalletProviderComponent = ({ children }) => {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter({ deepLink: true }),
-      new SolflareWalletAdapter({ deepLink: true }),
-    ],
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     []
   );
-
-  console.log("Rendering WalletProviderComponent...");
 
   return (
     <ConnectionProvider endpoint={endpoint}>
@@ -37,28 +30,12 @@ export const WalletProviderComponent = ({ children }) => {
         <WalletModalProvider>
           {children}
 
-          {/* WalletMultiButton harus berada dalam WalletModalProvider */}
-          <WalletButtonHandler />
+          {/* Tidak perlu membuat komponen tambahan untuk tombol */}
+          <div className="flex justify-center mt-4">
+            <WalletMultiButton />
+          </div>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
-};
-
-const WalletButtonHandler = () => {
-  const { publicKey } = useWallet();
-
-  const handleWalletButtonClick = () => {
-    if (publicKey) {
-      const walletAddress = publicKey.toBase58();
-
-      if (/android/i.test(navigator.userAgent)) {
-        window.location.href = `intent://wallet/${walletAddress}#Intent;scheme=phantom;package=app.phantom;end;`;
-      } else {
-        window.location.href = `phantom://wallet/${walletAddress}`;
-      }
-    }
-  };
-
-  return <WalletMultiButton onClick={handleWalletButtonClick} />;
 };
