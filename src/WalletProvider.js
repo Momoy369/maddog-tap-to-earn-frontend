@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import {
-  clusterApiUrl,
   ConnectionProvider,
   WalletProvider,
+  useWallet,
 } from "@solana/wallet-adapter-react";
 import {
   WalletModalProvider,
@@ -12,8 +13,9 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
-import { useWallet } from "@solana/wallet-adapter-react";
-import axios from "axios";
+import { clusterApiUrl } from "@solana/web3.js";
+
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 export const WalletProviderComponent = ({ children }) => {
   const network = "mainnet-beta";
