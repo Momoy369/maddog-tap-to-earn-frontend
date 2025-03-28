@@ -22,10 +22,7 @@ export const WalletProviderComponent = ({ children }) => {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter({ deepLink: true }),
-      new SolflareWalletAdapter({ deepLink: true }),
-    ],
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     []
   );
 
@@ -36,7 +33,7 @@ export const WalletProviderComponent = ({ children }) => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           {children}
-          <WalletHandler />
+          <WalletHandler /> {/* Pastikan WalletHandler dipanggil di sini */}
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
@@ -44,46 +41,40 @@ export const WalletProviderComponent = ({ children }) => {
 };
 
 const WalletHandler = () => {
-  const { publicKey, wallet } = useWallet();
+  const wallet = useWallet();
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [isWebView, setIsWebView] = useState(false);
 
   useEffect(() => {
-    // Cek apakah aplikasi berjalan di Telegram WebView
-    setIsWebView(window.Telegram?.WebApp !== undefined);
-
-    if (publicKey) {
-      console.log("Wallet Connected:", publicKey.toBase58());
+    if (wallet?.publicKey) {
+      console.log("Wallet Connected:", wallet.publicKey.toBase58());
       setIsWalletConnected(true);
 
       axios
         .post("https://maddog-token.site/user/save-wallet", {
-          walletAddress: publicKey.toBase58(),
+          walletAddress: wallet.publicKey.toBase58(),
         })
         .then((response) => console.log("Wallet saved:", response.data))
         .catch((error) => console.error("Error saving wallet:", error));
     }
-  }, [publicKey]);
+  }, [wallet]);
 
   const handleWalletButtonClick = () => {
-    if (isWebView && publicKey) {
-      // Buka dompet via deep link jika di Telegram WebView
-      window.location.href = `phantom://wallet/${publicKey.toBase58()}`;
+    if (publicKey) {
+      const walletAddress = publicKey.toBase58();
+
+      if (/android/i.test(navigator.userAgent)) {
+        // Jika di Android, pakai Intent URL
+        window.location.href = `intent://wallet/${walletAddress}#Intent;scheme=phantom;package=app.phantom;end;`;
+      } else {
+        // Jika di iOS atau browser biasa, pakai deep link biasa
+        window.location.href = `phantom://wallet/${walletAddress}`;
+      }
     }
   };
 
   return (
     <>
-      {isWebView ? (
-        <button
-          onClick={handleWalletButtonClick}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          🔗 Buka Wallet di Phantom
-        </button>
-      ) : (
-        <WalletMultiButton />
-      )}
+      <WalletMultiButton onClick={handleWalletButtonClick} />
     </>
   );
 };
