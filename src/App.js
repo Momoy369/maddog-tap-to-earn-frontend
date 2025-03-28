@@ -234,6 +234,22 @@ function App() {
     }, 0);
   };
 
+  const shareReferralLink = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Gunakan Kode Referral Saya!",
+          text: `Ayo gabung dan dapatkan bonus! Gunakan kode referral saya: ${referralLink}`,
+          url: referralLink,
+        });
+      } catch (error) {
+        console.error("Gagal berbagi:", error);
+      }
+    } else {
+      alert("Fitur berbagi tidak didukung di perangkat ini.");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
       <h1 className="text-4xl font-bold text-center mb-6">
@@ -351,14 +367,20 @@ function App() {
             <div className="mt-4"></div>
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
               <p className="text-lg font-semibold">🔗 Kode Referral</p>
-              <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
-                {referralLink}
-              </p>
+              <div className="relative bg-gray-900 py-2 px-4 rounded-lg mt-2 flex items-center justify-between">
+                <span className="truncate">{referralLink}</span>
+                <button
+                  onClick={copyReferralCode}
+                  className="ml-2 text-gray-400 hover:text-white"
+                >
+                  📋
+                </button>
+              </div>
               <button
-                onClick={copyReferralCode}
+                onClick={shareReferralLink}
                 className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
               >
-                Salin Kode Referral
+                📤 Bagikan Kode Referral
               </button>
             </div>
           </div>
