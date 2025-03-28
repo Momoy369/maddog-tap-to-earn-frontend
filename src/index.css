@@ -62,3 +62,7 @@ code {
 .animate-fadeUp {
   animation: fadeUp 1s forwards;
 }
+
+.tap-area {
+  touch-action: none; /* Mencegah scroll & zoom saat tap */
+}
