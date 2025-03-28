@@ -1,9 +1,9 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   ConnectionProvider,
   WalletProvider,
-  useWallet
+  useWallet,
 } from "@solana/wallet-adapter-react";
 import {
   WalletModalProvider,
@@ -40,25 +40,34 @@ export const WalletProviderComponent = ({ children }) => {
   );
 };
 
-
-
-
 const WalletHandler = () => {
   const wallet = useWallet();
-  const publicKey = wallet?.publicKey;
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   useEffect(() => {
-    if (publicKey) {
-      console.log("Wallet Connected:", publicKey.toBase58());
+    if (wallet?.publicKey) {
+      console.log("Wallet Connected:", wallet.publicKey.toBase58());
+      setIsWalletConnected(true);
 
       axios
         .post("https://maddog-token.site/user/save-wallet", {
-          walletAddress: publicKey.toBase58(),
+          walletAddress: wallet.publicKey.toBase58(),
         })
         .then((response) => console.log("Wallet saved:", response.data))
         .catch((error) => console.error("Error saving wallet:", error));
     }
-  }, [publicKey]);
+  }, [wallet]);
 
-  return <WalletMultiButton />;
+  const handleWalletButtonClick = () => {
+    if (isWalletConnected && wallet?.publicKey) {
+      // Redirect ke aplikasi Phantom jika wallet sudah terhubung
+      window.location.href = `phantom://wallet/${wallet.publicKey.toBase58()}`;
+    }
+  };
+
+  return (
+    <>
+      <WalletMultiButton onClick={handleWalletButtonClick} />
+    </>
+  );
 };
