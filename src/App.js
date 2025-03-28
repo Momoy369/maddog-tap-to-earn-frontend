@@ -23,7 +23,6 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [solBalance, setSolBalance] = useState(null);
-  const { publicKey, sendTransaction, connected } = useWallet();
 
   const imageRef = useRef(null);
 
