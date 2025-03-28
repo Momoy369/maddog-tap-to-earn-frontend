@@ -25,6 +25,8 @@ function App() {
   const [solBalance, setSolBalance] = useState(null);
   const { publicKey, sendTransaction, connected } = useWallet();
 
+  const [energy, setEnergy] = useState(50000);
+
   const imageRef = useRef(null);
 
   const handleWithdraw = () => {
