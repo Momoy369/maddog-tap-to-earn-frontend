@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import Swal from "sweetalert2";
 
 const API_URL = "https://maddog-token.site/user";
 
@@ -28,20 +28,44 @@ function App() {
       return;
     }
 
+    setIsLoading(true);
+
     axios
       .post(`${API_URL}/withdraw`, {
         telegramId: user.id,
         walletAddress: walletAddress,
       })
       .then((res) => {
+        setIsLoading(false);
+
         if (res.data.error) {
-          alert(res.data.error);
+          Swal.fire({
+            title: "Error",
+            text: res.data.error,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
         } else {
           setBalance(res.data.balance);
-          alert("Withdraw berhasil!");
+          Swal.fire({
+            title: "Success",
+            text: "Withdraw berhasil!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
         }
       })
-      .catch((err) => console.error("Error withdrawing:", err));
+      .catch((err) => {
+        setIsLoading(false);
+
+        console.error("Error withdrawing:", err);
+        Swal.fire({
+          title: "Error",
+          text: "Terjadi kesalahan saat memproses withdraw.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      });
   };
 
   useEffect(() => {
@@ -194,14 +218,18 @@ function App() {
 
           <button
             onClick={handleWithdraw}
-            disabled={balance < 50000 || !walletAddress}
+            disabled={balance < 50000 || !walletAddress || isLoading}
             className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
-              balance < 50000 || !walletAddress
-                ? "bg-gray-400 cursor-not-allowed"
+              balance < 50000 || !walletAddress || isLoading
+                ? "bg-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-500 hover:bg-blue-600"
             }`}
           >
-            💸 Withdraw
+            {isLoading ? (
+              <div className="loader"></div>
+            ) : (
+              <>💸 Withdraw</>
+            )}
           </button>
         </div>
 
