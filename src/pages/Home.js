@@ -12,7 +12,7 @@ const MAX_ENERGY = 50000;
 const REFILL_TIME = 3 * 60 * 60; // 3 jam dalam detik
 const ENERGY_PER_SECOND = MAX_ENERGY / REFILL_TIME;
 
-export default function Home() {
+export function Home() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [referralLink, setReferralLink] = useState("Memuat...");
@@ -374,3 +374,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
