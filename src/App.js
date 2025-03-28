@@ -166,7 +166,7 @@ function App() {
   };
 
   const handleTap = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
 
     if (energy <= 0) {
       alert("Energi habis! Tunggu hingga energi terisi kembali.");
