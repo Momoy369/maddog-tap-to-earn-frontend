@@ -4,6 +4,7 @@ import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
 import { useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const API_URL = "https://maddog-token.site/user";
 
@@ -315,7 +316,7 @@ function App() {
               💰 {balance} Coins
             </p>
             <div className="mt-4">
-              <WalletProviderComponent></WalletProviderComponent>
+              <WalletMultiButton/>
             </div>
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
               <p className="text-lg font-semibold">🔗 Kode Referral</p>
