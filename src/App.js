@@ -26,13 +26,13 @@ function App() {
   const [solBalance, setSolBalance] = useState(null);
   // const { publicKey, sendTransaction, connected } = useWallet();
 
-  const [energy, setEnergy] = useState(() => {
-    return parseInt(localStorage.getItem("energy")) || 50000;
-  });
+  // const [energy, setEnergy] = useState(() => {
+  //   return parseInt(localStorage.getItem("energy")) || 50000;
+  // });
 
-  useEffect(() => {
-    localStorage.setItem("energy", energy);
-  }, [energy]);
+  // useEffect(() => {
+  //   localStorage.setItem("energy", energy);
+  // }, [energy]);
 
   const imageRef = useRef(null);
 
@@ -127,6 +127,37 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      fetchEnergy();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEnergy((prevEnergy) => {
+        const elapsedTime = (Date.now() - lastUpdateRef.current) / 1000;
+        const recoveredEnergy = elapsedTime * ENERGY_PER_SECOND;
+        const newEnergy = Math.min(prevEnergy + recoveredEnergy, MAX_ENERGY);
+
+        lastUpdateRef.current = Date.now();
+        return newEnergy;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchEnergy = () => {
+    axios
+      .get(`${API_URL}/energy`, { params: { telegramId: user.id } })
+      .then((res) => {
+        setEnergy(res.data.energy);
+        lastUpdateRef.current = Date.now();
+      })
+      .catch((err) => console.error("Error fetching energy:", err));
+  };
+
   const handleTap = (e) => {
     if (energy > 0) {
       setEnergy((prevEnergy) => Math.max(prevEnergy - 1, 0));
@@ -160,28 +191,7 @@ function App() {
     setTimeout(() => {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
     }, 1000);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setEnergy(50000);
-    }, 3 * 60 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchEnergy = () => {
-    axios
-      .get(`${API_URL}/energy`, { params: { telegramId: user.id } })
-      .then((res) => setEnergy(res.data.energy))
-      .catch((err) => console.error("Error fetching energy:", err));
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchEnergy();
-    }
-  }, [user]);
+  }
 
   const copyReferralCode = () => {
     if (referralLink === "Memuat..." || referralLink === "Belum tersedia") {
