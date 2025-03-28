@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Leaderboard from "../Leaderboard";
-import BottomNav from "../components/BottomNav";
 // import { WalletProviderComponent } from "./WalletProvider";
 // import { useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
