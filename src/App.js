@@ -166,6 +166,8 @@ function App() {
   };
 
   const handleTap = (e) => {
+    e.preventDefault();
+
     if (energy > 0) {
       setEnergy((prevEnergy) => Math.max(prevEnergy - 1, 0));
     } else {
@@ -176,6 +178,23 @@ function App() {
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    const tapsArray = [];
+
+    if (e.touches) {
+      // Jika menggunakan touch, loop untuk setiap jari yang menyentuh
+      for (let i = 0; i < e.touches.length; i++) {
+        const touch = e.touches[i];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        tapsArray.push({ id: Date.now() + i, value: "+1", x, y });
+      }
+    } else {
+      // Jika pakai mouse biasa
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      tapsArray.push({ id: Date.now(), value: "+1", x, y });
+    }
 
     const newTap = { id: Date.now(), value: "+1", x, y };
     setTaps((prevTaps) => [...prevTaps, newTap]);
@@ -198,7 +217,7 @@ function App() {
     setTimeout(() => {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
     }, 1000);
-  }
+  };
 
   const copyReferralCode = () => {
     if (referralLink === "Memuat..." || referralLink === "Belum tersedia") {
@@ -247,7 +266,8 @@ function App() {
           className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
             isShaking ? "animate-shake" : ""
           }`}
-          onClick={handleTap}
+          onTouchStart={handleTap} // Mendukung tap banyak jari
+          onMouseDown={handleTap}
           ref={imageRef}
         />
         <p>
