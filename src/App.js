@@ -168,39 +168,39 @@ function App() {
   const handleTap = (e) => {
     e.preventDefault();
 
-    if (energy > 0) {
-      setEnergy((prevEnergy) => Math.max(prevEnergy - 1, 0));
-    } else {
+    if (energy <= 0) {
       alert("Energi habis! Tunggu hingga energi terisi kembali.");
       return;
     }
 
     const rect = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
     const tapsArray = [];
 
+    // Cek apakah event berasal dari touch (multi-finger tap) atau mouse click
+    let tapCount = 1; // Default 1 tap jika pakai mouse
     if (e.touches) {
-      // Jika menggunakan touch, loop untuk setiap jari yang menyentuh
-      for (let i = 0; i < e.touches.length; i++) {
+      tapCount = e.touches.length; // Jika pakai touch, ambil jumlah jari yang menyentuh
+      for (let i = 0; i < tapCount; i++) {
         const touch = e.touches[i];
         const x = touch.clientX - rect.left;
         const y = touch.clientY - rect.top;
-        tapsArray.push({ id: Date.now() + i, value: "+1", x, y });
+        tapsArray.push({ id: Date.now() + i, value: `+${tapCount}`, x, y });
       }
     } else {
-      // Jika pakai mouse biasa
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       tapsArray.push({ id: Date.now(), value: "+1", x, y });
     }
 
-    const newTap = { id: Date.now(), value: "+1", x, y };
-    setTaps((prevTaps) => [...prevTaps, newTap]);
+    // Kurangi energi sesuai jumlah jari yang digunakan
+    setEnergy((prevEnergy) => Math.max(prevEnergy - tapCount, 0));
 
+    // Tambahkan tap effect di layar
+    setTaps((prevTaps) => [...prevTaps, ...tapsArray]);
+
+    // Kirim ke backend jumlah tap yang terjadi
     axios
-      .post(`${API_URL}/tap`, { telegramId: user.id })
+      .post(`${API_URL}/tap`, { telegramId: user.id, tapCount }) // Kirim tapCount ke backend
       .then((res) => {
         if (res.data.error) {
           alert(res.data.error);
@@ -211,11 +211,13 @@ function App() {
       })
       .catch((err) => console.error("Error updating balance:", err));
 
+    // Efek shaking
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
 
+    // Hapus efek tap setelah 1 detik
     setTimeout(() => {
-      setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
+      setTaps((prev) => prev.filter((tap) => !tapsArray.includes(tap)));
     }, 1000);
   };
 
