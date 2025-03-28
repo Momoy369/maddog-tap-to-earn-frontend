@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Leaderboard from "./Leaderboard";
 import { WalletProviderComponent } from "./WalletProvider";
+import { useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
 
 const API_URL = "https://maddog-token.site/user";
@@ -23,6 +24,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [solBalance, setSolBalance] = useState(null);
+  const { publicKey, sendTransaction, connected } = useWallet();
 
   const imageRef = useRef(null);
 
