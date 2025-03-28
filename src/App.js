@@ -263,7 +263,7 @@ function App() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
+          className={`rounded-full w-40 h-40 shadow-md mb-4 cursor-pointer ${
             isShaking ? "animate-shake" : ""
           }`}
           onTouchStart={handleTap} // Mendukung tap banyak jari
