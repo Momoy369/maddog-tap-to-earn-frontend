@@ -176,10 +176,9 @@ function App() {
     const rect = imageRef.current.getBoundingClientRect();
     const tapsArray = [];
 
-    // Cek apakah event berasal dari touch (multi-finger tap) atau mouse click
-    let tapCount = 1; // Default 1 tap jika pakai mouse
+    let tapCount = 1;
     if (e.touches) {
-      tapCount = e.touches.length; // Jika pakai touch, ambil jumlah jari yang menyentuh
+      tapCount = e.touches.length;
       for (let i = 0; i < tapCount; i++) {
         const touch = e.touches[i];
         const x = touch.clientX - rect.left;
@@ -192,15 +191,12 @@ function App() {
       tapsArray.push({ id: Date.now(), value: "+1", x, y });
     }
 
-    // Kurangi energi sesuai jumlah jari yang digunakan
     setEnergy((prevEnergy) => Math.max(prevEnergy - tapCount, 0));
 
-    // Tambahkan tap effect di layar
     setTaps((prevTaps) => [...prevTaps, ...tapsArray]);
 
-    // Kirim ke backend jumlah tap yang terjadi
     axios
-      .post(`${API_URL}/tap`, { telegramId: user.id, tapCount }) // Kirim tapCount ke backend
+      .post(`${API_URL}/tap`, { telegramId: user.id, tapCount })
       .then((res) => {
         if (res.data.error) {
           alert(res.data.error);
@@ -211,11 +207,9 @@ function App() {
       })
       .catch((err) => console.error("Error updating balance:", err));
 
-    // Efek shaking
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
 
-    // Hapus efek tap setelah 1 detik
     setTimeout(() => {
       setTaps((prev) => prev.filter((tap) => !tapsArray.includes(tap)));
     }, 1000);
