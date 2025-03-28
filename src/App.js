@@ -259,7 +259,7 @@ function App() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className={`rounded-full w-40 h-40 shadow-md mb-4 cursor-pointer tap-area ${
+          className={`rounded-full w-50 h-50 shadow-md mb-4 cursor-pointer tap-area ${
             isShaking ? "animate-shake" : ""
           }`}
           onTouchStart={handleTap} // Mendukung tap banyak jari
@@ -303,7 +303,7 @@ function App() {
                 })
                 .catch((err) => console.error("Error claiming reward:", err));
             }}
-            className="mt-3 px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-48 text-white font-semibold"
+            className="mt-3 px-3 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-48 text-white font-semibold"
           >
             🎁 Klaim Harian
           </button>
@@ -311,7 +311,7 @@ function App() {
           <button
             onClick={handleWithdraw}
             disabled={balance < 1000000 || !walletAddress || isLoading}
-            className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
+            className={`mt-3 px-3 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
               balance < 1000000 || !walletAddress || isLoading
                 ? "bg-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-500 hover:bg-blue-600"
@@ -320,7 +320,6 @@ function App() {
             {isLoading ? <div className="loader"></div> : <>💸 Withdraw</>}
           </button>
         </div>
-
         {showWalletInput && (
           <div className="mt-3 w-full max-w-md">
             <label className="block text-sm text-white mb-2">
