@@ -119,6 +119,11 @@ function App() {
   }, []);
 
   const handleTap = (e) => {
+    if (energy <= 0) {
+      alert("Energi habis! Tunggu 3 jam agar energi terisi kembali.");
+      return;
+    }
+
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -129,8 +134,11 @@ function App() {
     axios
       .post(`${API_URL}/tap`, { telegramId: user.id })
       .then((res) => {
-        if (res.data) {
-          setBalance((prev) => prev + 1);
+        if (res.data.error) {
+          alert(res.data.error);
+        } else {
+          setBalance(res.data.balance);
+          setEnergy(res.data.energy);
         }
       })
       .catch((err) => console.error("Error updating balance:", err));
@@ -142,6 +150,19 @@ function App() {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
     }, 1000);
   };
+
+  const fetchEnergy = () => {
+    axios
+      .get(`${API_URL}/energy`, { params: { telegramId: user.id } })
+      .then((res) => setEnergy(res.data.energy))
+      .catch((err) => console.error("Error fetching energy:", err));
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchEnergy();
+    }
+  }, [user]);
 
   const copyReferralCode = () => {
     if (referralLink === "Memuat..." || referralLink === "Belum tersedia") {
@@ -209,6 +230,10 @@ function App() {
             Anda sudah menggunakan referral sebelumnya.
           </p>
         )}
+
+        <p className="text-xl font-semibold text-yellow-400 mt-2">
+          ⚡ Energi: {energy} / 50000
+        </p>
 
         <div className="flex justify-between w-full">
           <button
