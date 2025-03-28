@@ -203,147 +203,145 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
-      <h1 className="text-4xl font-bold text-center mb-6">
-        🚀 Maddog Token Tap-to-Earn
-      </h1>
+    <WalletProviderComponent>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+        <h1 className="text-4xl font-bold text-center mb-6">
+          🚀 Maddog Token Tap-to-Earn
+        </h1>
 
-      <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
-        <div className="relative">
-          {taps.map((tap) => (
-            <div
-              key={tap.id}
-              className="absolute text-green-500 text-xl animate-fadeUp"
-              style={{
-                left: `${tap.x}px`,
-                top: `${tap.y}px`,
-                animationDuration: "1s",
-              }}
-            >
-              {tap.value}
-            </div>
-          ))}
-        </div>
-        <img
-          src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-          alt="Maddog Token"
-          className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
-            isShaking ? "animate-shake" : ""
-          }`}
-          onClick={handleTap}
-          ref={imageRef}
-        />
-        <p>
-          Last Withdraw:{" "}
-          {lastWithdraw
-            ? lastWithdraw.toLocaleString()
-            : "Belum pernah withdraw"}
-        </p>
-        <p>
-          Last Claimed:{" "}
-          {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
-        </p>
-
-        {hasUsedReferral && (
-          <p className="text-red-500 mt-2">
-            Anda sudah menggunakan referral sebelumnya.
-          </p>
-        )}
-
-        <p className="text-xl font-semibold text-yellow-400 mt-2">
-          ⚡ Energi: {energy} / 50000
-        </p>
-
-        <div className="flex justify-between w-full">
-          <button
-            onClick={() => {
-              axios
-                .post(`${API_URL}/claim`, { telegramId: user.id })
-                .then((res) => {
-                  if (res.data.error) {
-                    alert(res.data.error);
-                  } else {
-                    setBalance(res.data.balance);
-                    setLastClaimed(new Date(res.data.lastClaimed));
-                    alert("Daily reward berhasil diklaim!");
-                  }
-                })
-                .catch((err) => console.error("Error claiming reward:", err));
-            }}
-            className="mt-3 px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-48 text-white font-semibold"
-          >
-            🎁 Klaim Harian
-          </button>
-
-          <button
-            onClick={handleWithdraw}
-            disabled={balance < 1000000 || !walletAddress || isLoading}
-            className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
-              balance < 1000000 || !walletAddress || isLoading
-                ? "bg-gray-400 cursor-not-allowed opacity-50"
-                : "bg-blue-500 hover:bg-blue-600"
+        <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="relative">
+            {taps.map((tap) => (
+              <div
+                key={tap.id}
+                className="absolute text-green-500 text-xl animate-fadeUp"
+                style={{
+                  left: `${tap.x}px`,
+                  top: `${tap.y}px`,
+                  animationDuration: "1s",
+                }}
+              >
+                {tap.value}
+              </div>
+            ))}
+          </div>
+          <img
+            src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+            alt="Maddog Token"
+            className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
+              isShaking ? "animate-shake" : ""
             }`}
-          >
-            {isLoading ? <div className="loader"></div> : <>💸 Withdraw</>}
-          </button>
-        </div>
+            onClick={handleTap}
+            ref={imageRef}
+          />
+          <p>
+            Last Withdraw:{" "}
+            {lastWithdraw
+              ? lastWithdraw.toLocaleString()
+              : "Belum pernah withdraw"}
+          </p>
+          <p>
+            Last Claimed:{" "}
+            {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
+          </p>
 
-        {showWalletInput && (
-          <div className="mt-3 w-full max-w-md">
-            <label className="block text-sm text-white mb-2">
-              Masukkan Alamat Wallet:
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 rounded-lg text-black"
-              placeholder="Alamat wallet"
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-            />
+          {hasUsedReferral && (
+            <p className="text-red-500 mt-2">
+              Anda sudah menggunakan referral sebelumnya.
+            </p>
+          )}
+
+          <p className="text-xl font-semibold text-yellow-400 mt-2">
+            ⚡ Energi: {energy} / 50000
+          </p>
+
+          <div className="flex justify-between w-full">
+            <button
+              onClick={() => {
+                axios
+                  .post(`${API_URL}/claim`, { telegramId: user.id })
+                  .then((res) => {
+                    if (res.data.error) {
+                      alert(res.data.error);
+                    } else {
+                      setBalance(res.data.balance);
+                      setLastClaimed(new Date(res.data.lastClaimed));
+                      alert("Daily reward berhasil diklaim!");
+                    }
+                  })
+                  .catch((err) => console.error("Error claiming reward:", err));
+              }}
+              className="mt-3 px-4 py-2 bg-green-500 hover:bg-green-600 transition-all rounded-lg w-48 text-white font-semibold"
+            >
+              🎁 Klaim Harian
+            </button>
+
             <button
               onClick={handleWithdraw}
-              className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
+              disabled={balance < 1000000 || !walletAddress || isLoading}
+              className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
+                balance < 1000000 || !walletAddress || isLoading
+                  ? "bg-gray-400 cursor-not-allowed opacity-50"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
             >
-              Konfirmasi Withdraw
+              {isLoading ? <div className="loader"></div> : <>💸 Withdraw</>}
             </button>
           </div>
-        )}
 
-        {user ? (
-          <div className="text-center">
-            <p className="text-lg font-semibold">👤 {user.username}</p>
-            <p className="text-2xl font-bold text-green-400 my-2">
-              💰 {balance} Coins
-            </p>
-            <div className="mt-4">
-              <WalletProviderComponent>
-                <WalletMultiButton />
-              </WalletProviderComponent>
-            </div>
-            <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
-              <p className="text-lg font-semibold">🔗 Kode Referral</p>
-              <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
-                {referralLink}
-              </p>
+          {showWalletInput && (
+            <div className="mt-3 w-full max-w-md">
+              <label className="block text-sm text-white mb-2">
+                Masukkan Alamat Wallet:
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 rounded-lg text-black"
+                placeholder="Alamat wallet"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+              />
               <button
-                onClick={copyReferralCode}
-                className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
+                onClick={handleWithdraw}
+                className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-all rounded-lg w-full text-white font-semibold"
               >
-                Salin Kode Referral
+                Konfirmasi Withdraw
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="mt-3 text-center">
-            <p>Memuat data pengguna...</p>
-          </div>
-        )}
-      </div>
+          )}
 
-      <div className="mt-8 w-full max-w-2xl">
-        <Leaderboard />
+          {user ? (
+            <div className="text-center">
+              <p className="text-lg font-semibold">👤 {user.username}</p>
+              <p className="text-2xl font-bold text-green-400 my-2">
+                💰 {balance} Coins
+              </p>
+              <div className="mt-4"></div>
+              <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
+                <p className="text-lg font-semibold">🔗 Kode Referral</p>
+                <p className="bg-gray-900 py-2 px-4 rounded-lg mt-2">
+                  {referralLink}
+                </p>
+                <button
+                  onClick={copyReferralCode}
+                  className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg w-full"
+                >
+                  Salin Kode Referral
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 text-center">
+              <p>Memuat data pengguna...</p>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8 w-full max-w-2xl">
+          <Leaderboard />
+        </div>
       </div>
-    </div>
+    </WalletProviderComponent>
   );
 }
 
