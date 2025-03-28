@@ -24,7 +24,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [solBalance, setSolBalance] = useState(null);
-  const { publicKey, sendTransaction, connected } = useWallet();
+  // const { publicKey, sendTransaction, connected } = useWallet();
 
   const [energy, setEnergy] = useState(() => {
     return parseInt(localStorage.getItem("energy")) || 50000;
