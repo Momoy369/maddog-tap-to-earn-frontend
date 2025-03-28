@@ -21,7 +21,6 @@ function App() {
   const [lastClaimed, setLastClaimed] = useState(null);
   const [hasUsedReferral, setHasUsedReferral] = useState(false);
 
-
   const [isLoading, setIsLoading] = useState(false);
   const [solBalance, setSolBalance] = useState(null);
   const { publicKey, sendTransaction, connected } = useWallet();
@@ -31,6 +30,16 @@ function App() {
   const handleWithdraw = () => {
     if (!walletAddress) {
       setShowWalletInput(true);
+      return;
+    }
+
+    if (balance < 1_000_000) {
+      Swal.fire({
+        title: "Error",
+        text: "Saldo tidak cukup untuk withdraw.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
       return;
     }
 
@@ -55,7 +64,7 @@ function App() {
           setBalance(res.data.balance);
           Swal.fire({
             title: "Success",
-            text: "Withdraw berhasil!",
+            html: `Withdraw berhasil!<br><br>🆔 <b>Transaction ID:</b> <br><code>${res.data.transactionId}</code>`,
             icon: "success",
             confirmButtonText: "OK",
           });
@@ -160,15 +169,6 @@ function App() {
       </h1>
 
       <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
-        <img
-          src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
-          alt="Maddog Token"
-          className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
-            isShaking ? "animate-shake" : ""
-          }`}
-          onClick={handleTap}
-          ref={imageRef}
-        />
         <div className="relative">
           {taps.map((tap) => (
             <div
@@ -184,6 +184,15 @@ function App() {
             </div>
           ))}
         </div>
+        <img
+          src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
+          alt="Maddog Token"
+          className={`rounded-full w-28 h-28 shadow-md mb-4 cursor-pointer ${
+            isShaking ? "animate-shake" : ""
+          }`}
+          onClick={handleTap}
+          ref={imageRef}
+        />
         <p>
           Last Withdraw:{" "}
           {lastWithdraw
@@ -224,18 +233,14 @@ function App() {
 
           <button
             onClick={handleWithdraw}
-            disabled={balance < 50000 || !walletAddress || isLoading}
+            disabled={balance < 1000000 || !walletAddress || isLoading}
             className={`mt-3 px-4 py-2 transition-all rounded-lg w-48 text-white font-semibold ${
-              balance < 50000 || !walletAddress || isLoading
+              balance < 1000000 || !walletAddress || isLoading
                 ? "bg-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-500 hover:bg-blue-600"
             }`}
           >
-            {isLoading ? (
-              <div className="loader"></div>
-            ) : (
-              <>💸 Withdraw</>
-            )}
+            {isLoading ? <div className="loader"></div> : <>💸 Withdraw</>}
           </button>
         </div>
 
