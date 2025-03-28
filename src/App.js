@@ -126,14 +126,6 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setEnergy(50000);
-    }, 3 * 60 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleTap = (e) => {
     if (energy > 0) {
       setEnergy((prevEnergy) => Math.max(prevEnergy - 1, 0));
@@ -168,6 +160,14 @@ function App() {
       setTaps((prev) => prev.filter((tap) => tap.id !== newTap.id));
     }, 1000);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEnergy(50000);
+    }, 3 * 60 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchEnergy = () => {
     axios
