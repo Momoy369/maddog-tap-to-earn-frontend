@@ -36,49 +36,29 @@ export const WalletProviderComponent = ({ children }) => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           {children}
-          <WalletHandler /> {/* Pastikan WalletHandler dipanggil di sini */}
+
+          {/* WalletMultiButton harus berada dalam WalletModalProvider */}
+          <WalletButtonHandler />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
 };
 
-const WalletHandler = () => {
+const WalletButtonHandler = () => {
   const { publicKey } = useWallet();
-  const wallet = useWallet();
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-
-  useEffect(() => {
-    if (wallet?.publicKey) {
-      console.log("Wallet Connected:", wallet.publicKey.toBase58());
-      setIsWalletConnected(true);
-
-      axios
-        .post("https://maddog-token.site/user/save-wallet", {
-          walletAddress: wallet.publicKey.toBase58(),
-        })
-        .then((response) => console.log("Wallet saved:", response.data))
-        .catch((error) => console.error("Error saving wallet:", error));
-    }
-  }, [wallet]);
 
   const handleWalletButtonClick = () => {
     if (publicKey) {
       const walletAddress = publicKey.toBase58();
 
       if (/android/i.test(navigator.userAgent)) {
-        // Jika di Android, pakai Intent URL
         window.location.href = `intent://wallet/${walletAddress}#Intent;scheme=phantom;package=app.phantom;end;`;
       } else {
-        // Jika di iOS atau browser biasa, pakai deep link biasa
         window.location.href = `phantom://wallet/${walletAddress}`;
       }
     }
   };
 
-  return (
-    <>
-      <WalletMultiButton onClick={handleWalletButtonClick} />
-    </>
-  );
+  return <WalletMultiButton onClick={handleWalletButtonClick} />;
 };
