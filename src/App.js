@@ -316,7 +316,9 @@ function App() {
               💰 {balance} Coins
             </p>
             <div className="mt-4">
-              <WalletMultiButton/>
+              <WalletProviderComponent>
+                <WalletMultiButton />
+              </WalletProviderComponent>
             </div>
             <div className="mt-6 bg-gray-700 p-4 rounded-lg w-full">
               <p className="text-lg font-semibold">🔗 Kode Referral</p>
