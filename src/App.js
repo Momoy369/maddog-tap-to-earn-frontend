@@ -30,16 +30,16 @@ function App() {
   const [solBalance, setSolBalance] = useState(null);
   // const { publicKey, sendTransaction, connected } = useWallet();
 
-  const [energy, setEnergy] = useState(0);
+  // const [energy, setEnergy] = useState(0);
   const lastUpdateRef = useRef(Date.now());
 
-  // const [energy, setEnergy] = useState(() => {
-  //   return parseInt(localStorage.getItem("energy")) || 50000;
-  // });
+  const [energy, setEnergy] = useState(() => {
+    return parseInt(localStorage.getItem("energy")) || 50000;
+  });
 
-  // useEffect(() => {
-  //   localStorage.setItem("energy", energy);
-  // }, [energy]);
+  useEffect(() => {
+    localStorage.setItem("energy", energy);
+  }, [energy]);
 
   const imageRef = useRef(null);
 
