@@ -20,6 +20,11 @@ function App() {
   const [lastClaimed, setLastClaimed] = useState(null);
   const [hasUsedReferral, setHasUsedReferral] = useState(false);
 
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [solBalance, setSolBalance] = useState(null);
+  const { publicKey, sendTransaction, connected } = useWallet();
+
   const imageRef = useRef(null);
 
   const handleWithdraw = () => {
