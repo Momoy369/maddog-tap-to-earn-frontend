@@ -29,7 +29,7 @@ function BottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 w-full max-w-md mx-auto flex justify-around p-4">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-gray-800 text-white rounded-full shadow-lg flex justify-around py-3 px-4">
       {menuItems.map((item) => (
         <Link
           key={item.id}

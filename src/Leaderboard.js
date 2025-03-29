@@ -14,9 +14,9 @@ function Leaderboard() {
   }, []);
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg">
+    <div className="p-4 bg-gray-800 rounded-lg overflow-x-auto">
       <h2 className="text-lg font-bold text-white">🏆 Leaderboard</h2>
-      <ul className="mt-2 text-white">
+      <ul className="mt-2 text-white w-full max-w-full">
         {leaderboard.map((user, index) => (
           <li
             key={index}
