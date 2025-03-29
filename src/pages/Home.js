@@ -259,23 +259,30 @@ export default function Home() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className={`rounded-full w-36 h-36 max-w-full shadow-md mb-4 cursor-pointer tap-area ${
+          className={`rounded-full w-38 h-38 max-w-full shadow-md mb-4 cursor-pointer tap-area ${
             isShaking ? "animate-shake" : ""
           }`}
           onTouchStart={handleTap}
           onMouseDown={handleTap}
           ref={imageRef}
         />
-        <p>
-          Last Withdraw:{" "}
-          {lastWithdraw
-            ? lastWithdraw.toLocaleString()
-            : "Belum pernah withdraw"}
-        </p>
-        <p>
-          Last Claimed:{" "}
-          {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
-        </p>
+        <div className="border border-gray-700 rounded-lg p-4 w-full max-w-sm text-center bg-gray-800 shadow-md">
+          <p className="text-yellow-400 font-semibold text-lg">
+            ⏳ Last Withdraw
+          </p>
+          <p className="text-white bg-gray-900 px-4 py-2 rounded-md mt-1">
+            {lastWithdraw
+              ? lastWithdraw.toLocaleString()
+              : "Belum pernah withdraw"}
+          </p>
+
+          <p className="text-green-400 font-semibold text-lg mt-4">
+            🎁 Last Claimed
+          </p>
+          <p className="text-white bg-gray-900 px-4 py-2 rounded-md mt-1">
+            {lastClaimed ? lastClaimed.toLocaleString() : "Belum pernah klaim"}
+          </p>
+        </div>
 
         {hasUsedReferral && (
           <p className="text-red-500 mt-2">
