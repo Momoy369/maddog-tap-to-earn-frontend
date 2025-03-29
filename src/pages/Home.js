@@ -192,9 +192,8 @@ export default function Home() {
     setEnergy((prevEnergy) => Math.max(prevEnergy - tapCount, 0));
     setTaps((prevTaps) => [...prevTaps, ...tapsArray]);
 
-    // 🔥 Tambahkan efek getar saat tap
     if (navigator.vibrate) {
-      navigator.vibrate(100); // Getar selama 100ms
+      navigator.vibrate(100);
     }
 
     axios
