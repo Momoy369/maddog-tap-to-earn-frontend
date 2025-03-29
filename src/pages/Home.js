@@ -374,7 +374,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-8 w-full max-w-2xl overflow-hidden">
+      <div className="mt-8 w-full max-w-2xl mb-20 overflow-hidden">
         <Leaderboard />
       </div>
     </div>
