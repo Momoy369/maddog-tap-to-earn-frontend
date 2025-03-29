@@ -10,7 +10,7 @@ import Profile from "./pages/Profile";
 export default function App() {
   return (
     <Router>
-      <div className="container mx-auto flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
