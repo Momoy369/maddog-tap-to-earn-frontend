@@ -166,8 +166,6 @@ export default function Home() {
   };
 
   const handleTap = (e) => {
-    // e.preventDefault();
-
     if (energy <= 0) {
       alert("Energi habis! Tunggu hingga energi terisi kembali.");
       return;
@@ -192,8 +190,12 @@ export default function Home() {
     }
 
     setEnergy((prevEnergy) => Math.max(prevEnergy - tapCount, 0));
-
     setTaps((prevTaps) => [...prevTaps, ...tapsArray]);
+
+    // 🔥 Tambahkan efek getar saat tap
+    if (navigator.vibrate) {
+      navigator.vibrate(100); // Getar selama 100ms
+    }
 
     axios
       .post(`${API_URL}/tap`, { telegramId: user.id, tapCount })
@@ -236,9 +238,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 w-full max-w-full overflow-hidden">
-      <h1 className="text-4xl font-bold text-center mb-6">
-        🚀 Maddog Token
-      </h1>
+      <h1 className="text-4xl font-bold text-center mb-6">🚀 Maddog Token</h1>
 
       <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
         <div className="relative">
