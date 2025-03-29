@@ -237,7 +237,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 w-full max-w-full overflow-hidden">
       <h1 className="text-4xl font-bold text-center mb-6">
-        🚀 Maddog Token Tap-to-Earn
+        🚀 Maddog Token
       </h1>
 
       <div className="flex flex-col items-center bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
