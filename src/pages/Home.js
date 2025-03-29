@@ -259,7 +259,7 @@ export default function Home() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className={`rounded-full w-38 h-38 shadow-md mb-4 cursor-pointer tap-area ${
+          className={`rounded-full w-36 h-36 shadow-md mb-4 cursor-pointer tap-area ${
             isShaking ? "animate-shake" : ""
           }`}
           onTouchStart={handleTap}
