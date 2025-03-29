@@ -235,7 +235,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-6 py-10 w-full max-w-full overflow-hidden">
       <h1 className="text-4xl font-bold text-center mb-6">
         🚀 Maddog Token Tap-to-Earn
       </h1>
@@ -259,7 +259,7 @@ export default function Home() {
         <img
           src="https://raw.githubusercontent.com/Momoy369/maddog-token/refs/heads/master/image/maddog.png"
           alt="Maddog Token"
-          className={`rounded-full w-36 h-36 shadow-md mb-4 cursor-pointer tap-area ${
+          className={`rounded-full w-36 h-36 max-w-full shadow-md mb-4 cursor-pointer tap-area ${
             isShaking ? "animate-shake" : ""
           }`}
           onTouchStart={handleTap}
@@ -368,7 +368,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-8 w-full max-w-2xl">
+      <div className="mt-8 w-full max-w-2xl overflow-hidden">
         <Leaderboard />
       </div>
     </div>
